@@ -1,101 +1,183 @@
-import Image from "next/image";
+'use client'
+
+import React, { useState, useEffect } from 'react';
+import { ClerkProvider, SignIn, SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
+import { Line } from 'react-chartjs-2';
+import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
+import { CircularProgress, AppBar, Toolbar, Typography, Container, TextField, Button, Grid, Paper, List, ListItem, ListItemText } from '@mui/material';
+
+ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
+
+const API_KEY = 'LbRADYwiNGmshUlm2lx7GWMselcap19tyJGjsnN2KKSW2GmxDu';
+const API_HOST = 'apidojo-yahoo-finance-v1.p.rapidapi.com';
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.js
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const [ticker, setTicker] = useState('');
+  const [stockData, setStockData] = useState(null);
+  const [graphData, setGraphData] = useState(null);
+  const [news, setNews] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [aiResponse, setAiResponse] = useState('');
+  const [userQuery, setUserQuery] = useState('');
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+  const fetchStockData = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch(`/api/stock?symbol=${ticker}`);
+      const data = await response.json();
+      setStockData(data);
+      
+      // Prepare graph data
+      const prices = data.prices.slice(0, 30).reverse();
+      setGraphData({
+        labels: prices.map(price => new Date(price.date * 1000).toLocaleDateString()),
+        datasets: [{
+          label: 'Stock Price',
+          data: prices.map(price => price.close),
+          borderColor: 'rgb(75, 192, 192)',
+          tension: 0.1
+        }]
+      });
+
+      // Fetch news
+      const newsResponse = await fetch(`/api/news?symbol=${ticker}`);
+      const newsData = await newsResponse.json();
+      setNews(newsData.slice(0, 5));
+    } catch (error) {
+      console.error('Error fetching stock data:', error);
+    }
+    setLoading(false);
+  };
+
+  const handleAiQuery = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch('/api/ai', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query: userQuery, stockData })
+      });
+      const data = await response.json();
+      setAiResponse(data.response);
+    } catch (error) {
+      console.error('Error querying AI:', error);
+    }
+    setLoading(false);
+  };
+
+  return (
+    <ClerkProvider publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}>
+      <div className="flex flex-col min-h-screen">
+        <AppBar position="static">
+          <Toolbar>
+            <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+              Stock Analysis
+            </Typography>
+            <SignedIn>
+              <UserButton afterSignOutUrl="/" />
+            </SignedIn>
+          </Toolbar>
+        </AppBar>
+
+        <Container className="flex-grow py-8">
+          <SignedOut>
+            <SignIn />
+          </SignedOut>
+          
+          <SignedIn>
+            <Grid container spacing={3}>
+              <Grid item xs={12}>
+                <Paper className="p-4">
+                  <TextField 
+                    fullWidth 
+                    label="Enter Stock Ticker" 
+                    value={ticker} 
+                    onChange={(e) => setTicker(e.target.value)} 
+                  />
+                  <Button 
+                    variant="contained" 
+                    color="primary" 
+                    onClick={fetchStockData} 
+                    className="mt-2"
+                  >
+                    Fetch Stock Data
+                  </Button>
+                </Paper>
+              </Grid>
+
+              {loading && (
+                <Grid item xs={12} className="text-center">
+                  <CircularProgress />
+                </Grid>
+              )}
+
+              {stockData && (
+                <>
+                  <Grid item xs={12} md={6}>
+                    <Paper className="p-4">
+                      <Typography variant="h6">Stock Information</Typography>
+                      <Typography>Symbol: {stockData.symbol}</Typography>
+                      <Typography>Price: ${stockData.price.regularMarketPrice.raw}</Typography>
+                      <Typography>Change: {stockData.price.regularMarketChange.fmt}</Typography>
+                      <Typography>Market Cap: {stockData.price.marketCap.fmt}</Typography>
+                    </Paper>
+                  </Grid>
+
+                  <Grid item xs={12} md={6}>
+                    <Paper className="p-4">
+                      <Typography variant="h6">Stock Graph</Typography>
+                      {graphData && <Line data={graphData} />}
+                    </Paper>
+                  </Grid>
+
+                  <Grid item xs={12}>
+                    <Paper className="p-4">
+                      <Typography variant="h6">Latest News</Typography>
+                      <List>
+                        {news.map((item, index) => (
+                          <ListItem key={index}>
+                            <ListItemText 
+                              primary={item.title} 
+                              secondary={new Date(item.providerPublishTime * 1000).toLocaleString()} 
+                            />
+                          </ListItem>
+                        ))}
+                      </List>
+                    </Paper>
+                  </Grid>
+
+                  <Grid item xs={12}>
+                    <Paper className="p-4">
+                      <Typography variant="h6">AI Assistant</Typography>
+                      <TextField 
+                        fullWidth 
+                        label="Ask about the stock data" 
+                        value={userQuery} 
+                        onChange={(e) => setUserQuery(e.target.value)} 
+                      />
+                      <Button 
+                        variant="contained" 
+                        color="secondary" 
+                        onClick={handleAiQuery} 
+                        className="mt-2"
+                      >
+                        Ask AI
+                      </Button>
+                      {aiResponse && (
+                        <Typography className="mt-2">{aiResponse}</Typography>
+                      )}
+                    </Paper>
+                  </Grid>
+                </>
+              )}
+            </Grid>
+          </SignedIn>
+        </Container>
+
+        <footer className="bg-gray-200 p-4 text-center">
+          <Typography>© 2024 Stock Analysis App</Typography>
+        </footer>
+      </div>
+    </ClerkProvider>
   );
 }
