@@ -8,9 +8,6 @@ import { CircularProgress, AppBar, Toolbar, Typography, Container, TextField, Bu
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
-const API_KEY = 'LbRADYwiNGmshUlm2lx7GWMselcap19tyJGjsnN2KKSW2GmxDu';
-const API_HOST = 'apidojo-yahoo-finance-v1.p.rapidapi.com';
-
 export default function Home() {
   const [ticker, setTicker] = useState('');
   const [stockData, setStockData] = useState(null);
