@@ -3,8 +3,9 @@ import OpenAI from 'openai'
 
 const systemPrompt = `
 You are a stock analysis assistant that helps users interpret stock data and market trends.
-For every user question, analyze the provided stock data and market information.
+For every user question, analyze the provided stock data and market information if available.
 Provide insights and explanations based on the data to answer the user's questions.
+If no specific stock data is provided, offer general advice or ask for more information.
 `
 
 export async function POST(req) {
@@ -12,16 +13,21 @@ export async function POST(req) {
     const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
 
     const lastMessage = data[data.length - 1]
-    const stockData = lastMessage.stockData
-    const lastMessageContent = lastMessage.content + "\n\nStock Data: " + JSON.stringify(stockData)
-    const lastDataWithoutLastMessage = data.slice(0, data.length - 1)
+    let lastMessageContent = lastMessage.content
+
+    // Check if stockData is available and append it to the message if it is
+    if (lastMessage.stockData) {
+        lastMessageContent += "\n\nStock Data: " + JSON.stringify(lastMessage.stockData)
+    }
+
+    const messages = [
+        { role: 'system', content: systemPrompt },
+        ...data.slice(0, -1),  // All previous messages
+        { role: 'user', content: lastMessageContent }
+    ]
 
     const completion = await openai.chat.completions.create({
-        messages: [
-            { role: 'system', content: systemPrompt },
-            ...lastDataWithoutLastMessage,
-            { role: 'user', content: lastMessageContent },
-        ],
+        messages: messages,
         model: 'gpt-4',
         stream: true,
     })
