@@ -5,13 +5,15 @@ import { ClerkProvider, SignIn, SignedIn, SignedOut, UserButton } from "@clerk/n
 import { Line } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
 import { ThemeProvider, createTheme, useTheme } from '@mui/material/styles';
-import { CssBaseline, AppBar, Toolbar, Typography, Container, TextField, Button, Grid, Paper, List, ListItem, ListItemText, IconButton, Box, Switch, Fab, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
+import { CssBaseline, AppBar, Toolbar, Typography, Container, TextField, Button, Grid, Paper, List, ListItem, ListItemText, IconButton, Box, Switch, Fab, Dialog, DialogTitle, DialogContent, DialogActions, Chip } from '@mui/material';
 import { Brightness4, Brightness7, Chat } from '@mui/icons-material';
 import { motion } from 'framer-motion';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
 const ColorModeContext = React.createContext({ toggleColorMode: () => {} });
+
+const suggestedTickers = ['AAPL', 'GOOGL', 'MSFT', 'AMZN', 'FB', 'TSLA', 'NVDA', 'JPM', 'V', 'JNJ'];
 
 function App() {
   const theme = useTheme();
@@ -46,11 +48,15 @@ function App() {
         const timestamps = result.timestamp || [];
         const closePrices = result.indicators.quote[0].close || [];
 
+        // Limit the number of data points to prevent performance issues
+        const dataLimit = 50;
+        const step = Math.ceil(timestamps.length / dataLimit);
+
         setGraphData({
-          labels: timestamps.map(ts => new Date(ts * 1000).toLocaleDateString()),
+          labels: timestamps.filter((_, index) => index % step === 0).map(ts => new Date(ts * 1000).toLocaleDateString()),
           datasets: [{
             label: 'Stock Price',
-            data: closePrices,
+            data: closePrices.filter((_, index) => index % step === 0),
             borderColor: theme.palette.primary.main,
             backgroundColor: theme.palette.primary.light,
             tension: 0.1
@@ -68,23 +74,24 @@ function App() {
 
   const handleChatSubmit = async () => {
     if (!userMessage.trim()) return;
-
-    setChatMessages(prev => [...prev, { role: 'user', content: userMessage }]);
+  
+    const newUserMessage = { role: 'user', content: userMessage, stockData: stockData };
+    setChatMessages(prev => [...prev, newUserMessage]);
     setUserMessage('');
-
+  
     try {
       const response = await fetch('/api/ai', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: [...chatMessages, { role: 'user', content: userMessage }] }),
+        body: JSON.stringify([...chatMessages, newUserMessage]),
       });
-
+  
       if (!response.body) throw new Error('No response body');
-
+  
       const reader = response.body.getReader();
       const decoder = new TextDecoder();
       let aiResponse = '';
-
+  
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
@@ -202,6 +209,17 @@ function App() {
                   variant="outlined"
                   sx={{ mb: 2 }}
                 />
+                <Box sx={{ mb: 2, display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+                  {suggestedTickers.map((suggestedTicker) => (
+                    <Chip
+                      key={suggestedTicker}
+                      label={suggestedTicker}
+                      onClick={() => setTicker(suggestedTicker)}
+                      color="primary"
+                      variant="outlined"
+                    />
+                  ))}
+                </Box>
                 <Button 
                   variant="contained" 
                   color="primary" 
@@ -245,7 +263,22 @@ function App() {
                   <Paper elevation={3} sx={{ p: 4 }}>
                     <Typography variant="h6" gutterBottom>Stock Graph</Typography>
                     {graphData ? (
-                      <Line data={graphData} options={{ responsive: true, maintainAspectRatio: false }} />
+                      <Box sx={{ height: 300 }}>
+                        <Line 
+                          data={graphData} 
+                          options={{ 
+                            responsive: true, 
+                            maintainAspectRatio: false,
+                            scales: {
+                              x: {
+                                ticks: {
+                                  maxTicksLimit: 10
+                                }
+                              }
+                            }
+                          }} 
+                        />
+                      </Box>
                     ) : (
                       <Typography color="error">No graph data available</Typography>
                     )}
