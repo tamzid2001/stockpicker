@@ -8,7 +8,7 @@ const API_HOST = 'apidojo-yahoo-finance-v1.p.rapidapi.com';
 export async function POST(req) {
     const { uuids } = await req.json();
 
-    const url = 'https://apidojo-yahoo-finance-v1.p.rapidapi.com/news/v2/list?region=US&snippetCount=28';
+    const url = 'https://apidojo-yahoo-finance-v1.p.rapidapi.com/news/v2/list?region=US&snippetCount=10';
     
     const options = {
         method: 'POST',
