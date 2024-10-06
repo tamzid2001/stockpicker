@@ -1,19 +1,26 @@
 'use client'
 
-import React, { useState } from 'react';
+import React, { useState, Suspense, lazy } from 'react';
 import { ClerkProvider, SignedIn, SignedOut } from "@clerk/nextjs";
 import { ThemeProvider, createTheme, useTheme } from '@mui/material/styles';
-import { CssBaseline, Container, Box } from '@mui/material';
-import Header from './components/Header';
-import StockAnalysis from './components/StockAnalysis';
-import EarningsInfo from './components/EarningsInfo';
-import StockFundamentals from './components/StockFundamentals';
-import AIChat from './components/AIChat';
-import Footer from './components/Footer';
-import Homepage from './components/Homepage';
-import NewsOutlet from './components/NewsOutlet';
+import { CssBaseline, Container, Box, Typography, CircularProgress } from '@mui/material';
+import ErrorBoundary from './components/ErrorBoundary';
+
+// Lazy load components
+const Header = lazy(() => import('./components/Header'));
+const StockAnalysis = lazy(() => import('./components/StockAnalysis'));
+const EarningsInfo = lazy(() => import('./components/EarningsInfo'));
+const StockFundamentals = lazy(() => import('./components/StockFundamentals'));
+const AIChat = lazy(() => import('./components/AIChat'));
+const Footer = lazy(() => import('./components/Footer'));
+const Homepage = lazy(() => import('./components/Homepage'));
+const NewsOutlet = lazy(() => import('./components/NewsOutlet'));
 
 const ColorModeContext = React.createContext({ toggleColorMode: () => {} });
+
+function LoadingFallback() {
+  return <CircularProgress />;
+}
 
 function App() {
   const theme = useTheme();
@@ -22,39 +29,78 @@ function App() {
   const [stockData, setStockData] = useState(null);
 
   const handleStockDataFetched = (data) => {
-    setStockData(data);
-    setCurrentTicker(data.chart.result[0].meta.symbol);
+    if (data && data.chart && data.chart.result && data.chart.result[0] && data.chart.result[0].meta) {
+      setStockData(data);
+      setCurrentTicker(data.chart.result[0].meta.symbol);
+    } else {
+      console.error('Invalid stock data structure:', data);
+    }
   };
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-      <Header colorMode={colorMode} theme={theme} />
+      <ErrorBoundary fallback={<Typography color="error">Error loading header</Typography>}>
+        <Suspense fallback={<LoadingFallback />}>
+          <Header colorMode={colorMode} theme={theme} />
+        </Suspense>
+      </ErrorBoundary>
 
       <Container component="main" sx={{ mt: 4, mb: 4, flexGrow: 1 }}>
         <SignedOut>
-          <Homepage />
-          <NewsOutlet />
+          <ErrorBoundary fallback={<Typography color="error">Error loading homepage</Typography>}>
+            <Suspense fallback={<LoadingFallback />}>
+              <Homepage />
+            </Suspense>
+          </ErrorBoundary>
         </SignedOut>
         
         <SignedIn>
-          <StockAnalysis theme={theme} onStockDataFetched={handleStockDataFetched} />
+          <ErrorBoundary fallback={<Typography color="error">Error loading stock analysis</Typography>}>
+            <Suspense fallback={<LoadingFallback />}>
+              <StockAnalysis theme={theme} onStockDataFetched={handleStockDataFetched} />
+            </Suspense>
+          </ErrorBoundary>
+          
           {currentTicker && (
             <>
-              <EarningsInfo ticker={currentTicker} />
-              <StockFundamentals ticker={currentTicker} />
+              <ErrorBoundary fallback={<Typography color="error">Error loading earnings info</Typography>}>
+                <Suspense fallback={<LoadingFallback />}>
+                  <EarningsInfo ticker={currentTicker} />
+                </Suspense>
+              </ErrorBoundary>
+              
+              <ErrorBoundary fallback={<Typography color="error">Error loading stock fundamentals</Typography>}>
+                <Suspense fallback={<LoadingFallback />}>
+                  <StockFundamentals ticker={currentTicker} />
+                </Suspense>
+              </ErrorBoundary>
             </>
           )}
-          <NewsOutlet />
         </SignedIn>
+
+        <ErrorBoundary fallback={<Typography color="error">Error loading news</Typography>}>
+          <Suspense fallback={<LoadingFallback />}>
+            <NewsOutlet />
+          </Suspense>
+        </ErrorBoundary>
       </Container>
 
-      <AIChat stockData={stockData} />
-      <Footer />
+      <ErrorBoundary fallback={<Typography color="error">Error loading AI chat</Typography>}>
+        <Suspense fallback={<LoadingFallback />}>
+          <AIChat stockData={stockData} />
+        </Suspense>
+      </ErrorBoundary>
+
+      <ErrorBoundary fallback={<Typography color="error">Error loading footer</Typography>}>
+        <Suspense fallback={<LoadingFallback />}>
+          <Footer />
+        </Suspense>
+      </ErrorBoundary>
     </Box>
   );
 }
 
-export default function ThemedApp() {
+function ThemedApp() {
   const [mode, setMode] = React.useState('light');
   const colorMode = React.useMemo(
     () => ({
@@ -82,13 +128,17 @@ export default function ThemedApp() {
   );
 
   return (
-    <ColorModeContext.Provider value={colorMode}>
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
-        <ClerkProvider publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}>
-          <App />
-        </ClerkProvider>
-      </ThemeProvider>
-    </ColorModeContext.Provider>
+    <ErrorBoundary fallback={<Typography color="error">An error occurred in the application</Typography>}>
+      <ColorModeContext.Provider value={colorMode}>
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
+          <ClerkProvider publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}>
+            <App />
+          </ClerkProvider>
+        </ThemeProvider>
+      </ColorModeContext.Provider>
+    </ErrorBoundary>
   );
 }
+
+export default ThemedApp;
