@@ -8,14 +8,15 @@ import ErrorBoundary from './components/ErrorBoundary';
 
 // Lazy load components
 const Header = lazy(() => import('./components/Header'));
-const StockAnalysis = lazy(() => import('./components/StockAnalysis'));
-const EarningsInfo = lazy(() => import('./components/EarningsInfo'));
-const StockFundamentals = lazy(() => import('./components/StockFundamentals'));
-import StockStatistics from './components/Statistics';
+const StockAnalysis = lazy(() => import('./components/stocks/StockAnalysis'));
+const EarningsInfo = lazy(() => import('./components/stocks/EarningsInfo'));
+const StockFundamentals = lazy(() => import('./components/stocks/StockFundamentals'));
+import StockStatistics from './components/stocks/Statistics';
 const AIChat = lazy(() => import('./components/AIChat'));
 const Footer = lazy(() => import('./components/Footer'));
 const Homepage = lazy(() => import('./components/Homepage'));
 const NewsOutlet = lazy(() => import('./components/NewsOutlet'));
+import { TickerProvider } from './components/TickerContext'; // Import the TickerProvider
 
 const ColorModeContext = React.createContext({ toggleColorMode: () => {} });
 
@@ -38,11 +39,8 @@ function App() {
     }
   };
 
-  useEffect(() => {
-    console.log(`Mounted with ticker:`, currentTicker);
-  }, [currentTicker]);
-
   return (
+    <TickerProvider>
     <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
       <ErrorBoundary fallback={<Typography color="error">Error loading header</Typography>}>
         <Suspense fallback={<LoadingFallback />}>
@@ -66,7 +64,6 @@ function App() {
             </Suspense>
           </ErrorBoundary>
           
-          {currentTicker && (
             <Box>
               <Typography variant="h6" gutterBottom>Additional Information for {currentTicker}</Typography>
               <ErrorBoundary fallback={<Typography color="error">Error loading earnings info</Typography>}>
@@ -87,7 +84,6 @@ function App() {
                 </Suspense>
               </ErrorBoundary>
             </Box>
-          )}
         </SignedIn>
 
         <ErrorBoundary fallback={<Typography color="error">Error loading news</Typography>}>
@@ -109,6 +105,7 @@ function App() {
         </Suspense>
       </ErrorBoundary>
     </Box>
+    </TickerProvider>
   );
 }
 

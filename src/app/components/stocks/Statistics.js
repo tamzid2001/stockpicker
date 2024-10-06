@@ -3,7 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import { Paper, Typography, Grid, CircularProgress } from '@mui/material';
 
-const StockStatistics = ({ ticker }) => {
+const StockStatistics = () => {
+  const { ticker } = useTicker();
   const [statistics, setStatistics] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);

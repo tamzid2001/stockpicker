@@ -3,7 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import { Paper, Typography, Box, Grid, List, ListItem, ListItemText, CircularProgress } from '@mui/material';
 
-const StockFundamentals = ({ ticker }) => {
+const StockFundamentals = () => {
+  const { ticker } = useTicker();
   const [fundamentals, setFundamentals] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);

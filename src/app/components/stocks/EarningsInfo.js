@@ -2,7 +2,8 @@
 import React, { useState, useEffect } from 'react';
 import { Paper, Typography, Box, CircularProgress } from '@mui/material';
 
-const EarningsInfo = ({ ticker }) => {
+const EarningsInfo = () => {
+  const { ticker } = useTicker();
   const [earningsData, setEarningsData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);

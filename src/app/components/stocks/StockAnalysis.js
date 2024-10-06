@@ -1,6 +1,6 @@
 // components/StockAnalysis.js
 import React, { useState } from 'react';
-import { TextField, Button, Box, Chip, Paper, Typography, Grid, CircularProgress } from '@mui/material';
+import { Button, Box, Chip, Paper, Typography, Grid, CircularProgress } from '@mui/material';
 import { Line } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
@@ -23,10 +23,11 @@ ChartJS.register(
   Legend
 );
 
-const suggestedTickers = ['AAPL', 'GOOGL', 'MSFT', 'AMZN', 'FB', 'TSLA', 'NVDA', 'JPM', 'V', 'JNJ'];
+import { useTicker } from './TickerContext';
+import TickerInput from './TickerInput'; // Import the new component
 
 const StockAnalysis = ({ theme }) => {
-  const [ticker, setTicker] = useState('');
+  const { ticker } = useTicker(); // Use the ticker from context
   const [stockData, setStockData] = useState(null);
   const [graphData, setGraphData] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -110,25 +111,7 @@ const StockAnalysis = ({ theme }) => {
     <Grid container spacing={3}>
       <Grid item xs={12}>
         <Paper elevation={3} sx={{ p: 4 }}>
-          <TextField 
-            fullWidth 
-            label="Enter Stock Ticker" 
-            value={ticker} 
-            onChange={(e) => setTicker(e.target.value.toUpperCase())} 
-            variant="outlined"
-            sx={{ mb: 2 }}
-          />
-          <Box sx={{ mb: 2, display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-            {suggestedTickers.map((suggestedTicker) => (
-              <Chip
-                key={suggestedTicker}
-                label={suggestedTicker}
-                onClick={() => setTicker(suggestedTicker)}
-                color="primary"
-                variant="outlined"
-              />
-            ))}
-          </Box>
+          <TickerInput /> {/* Use the TickerInput component */}
           <Button 
             variant="contained" 
             color="primary" 
