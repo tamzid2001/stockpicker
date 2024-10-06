@@ -1,6 +1,6 @@
 // components/homepage/FeatureCards.js
 import React from 'react';
-import { Container, Typography, Grid, Paper, CardContent, Box, IconButton } from "@mui/material";
+import { Container, Typography, Grid, Paper, CardContent, Box } from "@mui/material";
 import { motion } from 'framer-motion';
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import TimelineIcon from '@mui/icons-material/Timeline';
@@ -28,10 +28,8 @@ const FeatureCard = ({ icon: Icon, title, description }) => (
       backgroundColor: 'background.paper',
     }}
   >
-    <Box sx={{ mb: 2 }}>
-        <IconButton>
-            <Icon sx={{ fontSize: 16, color: 'primary.main' }} />
-        </IconButton>
+    <Box sx={{ mb: 2, display: 'flex', alignItems: 'center', justifyContent: 'center', width: 40, height: 40 }}>
+      <Icon sx={{ width: '100%', height: '100%', color: 'primary.main' }} />
     </Box>
     <CardContent sx={{ textAlign: 'center' }}>
       <Typography gutterBottom variant="h5" component="h2">

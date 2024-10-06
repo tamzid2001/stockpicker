@@ -1,7 +1,6 @@
 // components/homepage/WaitingList.js
 import React from 'react';
-import { Container, Typography, Box } from "@mui/material";
-import { Input, Button } from '@mui/joy';
+import { Container, Typography, Box, TextField, Button } from "@mui/material";
 
 const WaitingList = () => (
   <Container maxWidth="sm" sx={{ py: 8 }}>
@@ -11,8 +10,14 @@ const WaitingList = () => (
     <Typography variant="body1" align="center" paragraph>
       Be the first to know when we launch new features. Sign up for our waiting list!
     </Typography>
-    <Box component="form" noValidate sx={{ mt: 1 }}>
-      <Input
+    <Box 
+      component="form" 
+      noValidate 
+      sx={{ mt: 2, display: 'flex', flexDirection: 'column', alignItems: 'center' }}
+      onSubmit={(e) => e.preventDefault()} // Prevent form submission for now
+    >
+      <TextField
+        variant="outlined"
         placeholder="Enter your email"
         required
         fullWidth
@@ -20,9 +25,10 @@ const WaitingList = () => (
       />
       <Button
         type="submit"
-        fullWidth
+        variant="contained"
         color="primary"
-        size="lg"
+        fullWidth
+        size="large"
       >
         Join Waiting List
       </Button>
