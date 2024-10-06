@@ -1,6 +1,6 @@
 // components/StockAnalysis.js
 import React, { useState } from 'react';
-import { Button, Box, Chip, Paper, Typography, Grid, CircularProgress } from '@mui/material';
+import { Button, Box, Paper, Typography, Grid, CircularProgress } from '@mui/material';
 import { Line } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
@@ -50,7 +50,7 @@ const StockAnalysis = ({ theme }) => {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const data = await response.json();
-      console.log('API response:', data);  // Log the full response
+      console.log('API response:', data);
 
       if (data.error) {
         throw new Error(data.error);
