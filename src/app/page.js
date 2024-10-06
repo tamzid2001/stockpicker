@@ -1,10 +1,11 @@
-'use client'
+'use client';
 
-import React, { useState, Suspense, lazy, useEffect } from 'react';
+import React, { Suspense, lazy, useContext } from 'react';
 import { ClerkProvider, SignedIn, SignedOut } from "@clerk/nextjs";
 import { ThemeProvider, createTheme, useTheme } from '@mui/material/styles';
 import { CssBaseline, Container, Box, Typography, CircularProgress } from '@mui/material';
 import ErrorBoundary from './components/ErrorBoundary';
+import { TickerProvider, useTicker } from './components/stocks/TickerContext'; // Import the TickerProvider and useTicker
 
 // Lazy load components
 const Header = lazy(() => import('./components/Header'));
@@ -16,7 +17,6 @@ const AIChat = lazy(() => import('./components/AIChat'));
 const Footer = lazy(() => import('./components/Footer'));
 const Homepage = lazy(() => import('./components/Homepage'));
 const NewsOutlet = lazy(() => import('./components/NewsOutlet'));
-import { TickerProvider } from './components/TickerContext'; // Import the TickerProvider
 
 const ColorModeContext = React.createContext({ toggleColorMode: () => {} });
 
@@ -26,21 +26,20 @@ function LoadingFallback() {
 
 function App() {
   const theme = useTheme();
-  const colorMode = React.useContext(ColorModeContext);
-  const [currentTicker, setCurrentTicker] = useState('');
+  const colorMode = useContext(ColorModeContext);
+  const { ticker, setTicker } = useTicker(); // Access the global ticker using the useTicker hook
   const [stockData, setStockData] = useState(null);
 
   const handleStockDataFetched = (data) => {
     if (data && data.chart && data.chart.result && data.chart.result[0] && data.chart.result[0].meta) {
       setStockData(data);
-      setCurrentTicker(data.chart.result[0].meta.symbol);
+      setTicker(data.chart.result[0].meta.symbol); // Update the global ticker
     } else {
       console.error('Invalid stock data structure:', data);
     }
   };
 
   return (
-    <TickerProvider>
     <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
       <ErrorBoundary fallback={<Typography color="error">Error loading header</Typography>}>
         <Suspense fallback={<LoadingFallback />}>
@@ -64,26 +63,28 @@ function App() {
             </Suspense>
           </ErrorBoundary>
           
+          {ticker && (
             <Box>
-              <Typography variant="h6" gutterBottom>Additional Information for {currentTicker}</Typography>
+              <Typography variant="h6" gutterBottom>Additional Information for {ticker}</Typography>
               <ErrorBoundary fallback={<Typography color="error">Error loading earnings info</Typography>}>
                 <Suspense fallback={<LoadingFallback />}>
-                  <EarningsInfo ticker={currentTicker} />
+                  <EarningsInfo ticker={ticker} />
                 </Suspense>
               </ErrorBoundary>
               
               <ErrorBoundary fallback={<Typography color="error">Error loading stock fundamentals</Typography>}>
                 <Suspense fallback={<LoadingFallback />}>
-                  <StockFundamentals ticker={currentTicker} />
+                  <StockFundamentals ticker={ticker} />
                 </Suspense>
               </ErrorBoundary>
 
               <ErrorBoundary fallback={<Typography color="error">Error loading stock statistics</Typography>}>
                 <Suspense fallback={<LoadingFallback />}>
-                  <StockStatistics ticker={currentTicker} />
+                  <StockStatistics ticker={ticker} />
                 </Suspense>
               </ErrorBoundary>
             </Box>
+          )}
         </SignedIn>
 
         <ErrorBoundary fallback={<Typography color="error">Error loading news</Typography>}>
@@ -105,12 +106,11 @@ function App() {
         </Suspense>
       </ErrorBoundary>
     </Box>
-    </TickerProvider>
   );
 }
 
 function ThemedApp() {
-  const [mode, setMode] = React.useState('light');
+  const [mode, setMode] = useState('light');
   const colorMode = React.useMemo(
     () => ({
       toggleColorMode: () => {
@@ -142,7 +142,9 @@ function ThemedApp() {
         <ThemeProvider theme={theme}>
           <CssBaseline />
           <ClerkProvider publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}>
-            <App />
+            <TickerProvider> {/* Wrap the entire app in the TickerProvider */}
+              <App />
+            </TickerProvider>
           </ClerkProvider>
         </ThemeProvider>
       </ColorModeContext.Provider>
