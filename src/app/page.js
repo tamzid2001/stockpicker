@@ -11,6 +11,7 @@ const Header = lazy(() => import('./components/Header'));
 const StockAnalysis = lazy(() => import('./components/StockAnalysis'));
 const EarningsInfo = lazy(() => import('./components/EarningsInfo'));
 const StockFundamentals = lazy(() => import('./components/StockFundamentals'));
+import StockStatistics from './components/Statistics';
 const AIChat = lazy(() => import('./components/AIChat'));
 const Footer = lazy(() => import('./components/Footer'));
 const Homepage = lazy(() => import('./components/Homepage'));
@@ -72,6 +73,12 @@ function App() {
               <ErrorBoundary fallback={<Typography color="error">Error loading stock fundamentals</Typography>}>
                 <Suspense fallback={<LoadingFallback />}>
                   <StockFundamentals ticker={currentTicker} />
+                </Suspense>
+              </ErrorBoundary>
+
+              <ErrorBoundary fallback={<Typography color="error">Error loading stock fundamentals</Typography>}>
+                <Suspense fallback={<LoadingFallback />}>
+                  <StockStatistics ticker={currentTicker} />
                 </Suspense>
               </ErrorBoundary>
             </>
