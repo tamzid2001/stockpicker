@@ -39,7 +39,7 @@ function App() {
   };
 
   useEffect(() => {
-    console.log(`${ComponentName} mounted with ticker:`, currentTicker);
+    console.log(`Mounted with ticker:`, currentTicker);
   }, [currentTicker]);
 
   return (
