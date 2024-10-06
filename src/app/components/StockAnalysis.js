@@ -2,6 +2,26 @@
 import React, { useState } from 'react';
 import { TextField, Button, Box, Chip, Paper, Typography, Grid, CircularProgress } from '@mui/material';
 import { Line } from 'react-chartjs-2';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend
+} from 'chart.js';
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
 const suggestedTickers = ['AAPL', 'GOOGL', 'MSFT', 'AMZN', 'FB', 'TSLA', 'NVDA', 'JPM', 'V', 'JNJ'];
 
@@ -147,9 +167,14 @@ const StockAnalysis = ({ theme }) => {
                       maintainAspectRatio: false,
                       scales: {
                         x: {
+                          type: 'category',
                           ticks: {
                             maxTicksLimit: 10
                           }
+                        },
+                        y: {
+                          type: 'linear',
+                          beginAtZero: false
                         }
                       }
                     }} 
