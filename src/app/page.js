@@ -1,6 +1,6 @@
 'use client';
 
-import React, { Suspense, lazy, useContext } from 'react';
+import React, { Suspense, lazy, useContext, useState } from 'react';
 import { ClerkProvider, SignedIn, SignedOut } from "@clerk/nextjs";
 import { ThemeProvider, createTheme, useTheme } from '@mui/material/styles';
 import { CssBaseline, Container, Box, Typography, CircularProgress } from '@mui/material';
