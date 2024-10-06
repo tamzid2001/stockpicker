@@ -38,6 +38,10 @@ function App() {
     }
   };
 
+  useEffect(() => {
+    console.log(`${ComponentName} mounted with ticker:`, ticker);
+  }, [ticker]);
+
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
       <ErrorBoundary fallback={<Typography color="error">Error loading header</Typography>}>
@@ -63,7 +67,8 @@ function App() {
           </ErrorBoundary>
           
           {currentTicker && (
-            <>
+            <Box>
+              <Typography variant="h6" gutterBottom>Additional Information for {currentTicker}</Typography>
               <ErrorBoundary fallback={<Typography color="error">Error loading earnings info</Typography>}>
                 <Suspense fallback={<LoadingFallback />}>
                   <EarningsInfo ticker={currentTicker} />
@@ -76,12 +81,12 @@ function App() {
                 </Suspense>
               </ErrorBoundary>
 
-              <ErrorBoundary fallback={<Typography color="error">Error loading stock fundamentals</Typography>}>
+              <ErrorBoundary fallback={<Typography color="error">Error loading stock statistics</Typography>}>
                 <Suspense fallback={<LoadingFallback />}>
                   <StockStatistics ticker={currentTicker} />
                 </Suspense>
               </ErrorBoundary>
-            </>
+            </Box>
           )}
         </SignedIn>
 
