@@ -1,0 +1,153 @@
+// components/StockAnalysis.js
+import React, { useState } from 'react';
+import { TextField, Button, Box, Chip, Paper, Typography, Grid } from '@mui/material';
+import { Line } from 'react-chartjs-2';
+
+const suggestedTickers = ['AAPL', 'GOOGL', 'MSFT', 'AMZN', 'FB', 'TSLA', 'NVDA', 'JPM', 'V', 'JNJ'];
+
+const StockAnalysis = ({ theme, onStockDataFetched }) => {
+  const [ticker, setTicker] = useState('');
+  const [stockData, setStockData] = useState(null);
+  const [graphData, setGraphData] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const fetchData = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await fetch(`/api/stock?symbol=${ticker}`);
+      const data = await response.json();
+      
+      setStockData(data);
+      onStockDataFetched(data);  // Pass data to parent component
+      
+      if (data.chart && data.chart.result && data.chart.result[0]) {
+        const result = data.chart.result[0];
+        const timestamps = result.timestamp || [];
+        const closePrices = result.indicators.quote[0].close || [];
+
+        const dataLimit = 50;
+        const step = Math.ceil(timestamps.length / dataLimit);
+
+        setGraphData({
+          labels: timestamps.filter((_, index) => index % step === 0).map(ts => new Date(ts * 1000).toLocaleDateString()),
+          datasets: [{
+            label: 'Stock Price',
+            data: closePrices.filter((_, index) => index % step === 0),
+            borderColor: theme.palette.primary.main,
+            backgroundColor: theme.palette.primary.light,
+            tension: 0.1
+          }]
+        });
+      } else {
+        setError('Invalid data structure received from the stock API');
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error);
+      setError('Error fetching data. Please try again.');
+    }
+    setLoading(false);
+  };
+
+  const DisplayStockInfo = ({ data }) => {
+    if (!data || !data.chart || !data.chart.result || !data.chart.result[0]) {
+      return <Typography color="error">No stock data available</Typography>;
+    }
+
+    const stockInfo = data.chart.result[0].meta;
+
+    return (
+      <Paper elevation={3} className="p-4">
+        <Typography variant="h6" gutterBottom>Stock Information</Typography>
+        <Typography>Symbol: {stockInfo.symbol || 'N/A'}</Typography>
+        <Typography>Currency: {stockInfo.currency || 'N/A'}</Typography>
+        <Typography>Exchange: {stockInfo.exchangeName || 'N/A'}</Typography>
+        <Typography>Current Price: {stockInfo.regularMarketPrice?.toFixed(2) || 'N/A'}</Typography>
+        <Typography>52 Week High: {stockInfo.fiftyTwoWeekHigh?.toFixed(2) || 'N/A'}</Typography>
+        <Typography>52 Week Low: {stockInfo.fiftyTwoWeekLow?.toFixed(2) || 'N/A'}</Typography>
+      </Paper>
+    );
+  };
+
+  return (
+    <Grid container spacing={3}>
+      <Grid item xs={12}>
+        <Paper elevation={3} sx={{ p: 4 }}>
+          <TextField 
+            fullWidth 
+            label="Enter Stock Ticker" 
+            value={ticker} 
+            onChange={(e) => setTicker(e.target.value)} 
+            variant="outlined"
+            sx={{ mb: 2 }}
+          />
+          <Box sx={{ mb: 2, display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+            {suggestedTickers.map((suggestedTicker) => (
+              <Chip
+                key={suggestedTicker}
+                label={suggestedTicker}
+                onClick={() => setTicker(suggestedTicker)}
+                color="primary"
+                variant="outlined"
+              />
+            ))}
+          </Box>
+          <Button 
+            variant="contained" 
+            color="primary" 
+            onClick={fetchData} 
+            disabled={loading}
+            fullWidth
+          >
+            {loading ? 'Fetching...' : 'Analyze Stock'}
+          </Button>
+        </Paper>
+      </Grid>
+
+      {error && (
+        <Grid item xs={12}>
+          <Paper elevation={3} sx={{ p: 2, bgcolor: 'error.main', color: 'error.contrastText' }}>
+            <Typography>{error}</Typography>
+          </Paper>
+        </Grid>
+      )}
+
+      {stockData && (
+        <>
+          <Grid item xs={12} md={6}>
+            <DisplayStockInfo data={stockData} />
+          </Grid>
+
+          <Grid item xs={12} md={6}>
+            <Paper elevation={3} sx={{ p: 4 }}>
+              <Typography variant="h6" gutterBottom>Stock Graph</Typography>
+              {graphData ? (
+                <Box sx={{ height: 300 }}>
+                  <Line 
+                    data={graphData} 
+                    options={{ 
+                      responsive: true, 
+                      maintainAspectRatio: false,
+                      scales: {
+                        x: {
+                          ticks: {
+                            maxTicksLimit: 10
+                          }
+                        }
+                      }
+                    }} 
+                  />
+                </Box>
+              ) : (
+                <Typography color="error">No graph data available</Typography>
+              )}
+            </Paper>
+          </Grid>
+        </>
+      )}
+    </Grid>
+  );
+};
+
+export default StockAnalysis;
