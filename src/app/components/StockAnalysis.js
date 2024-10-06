@@ -1,11 +1,11 @@
 // components/StockAnalysis.js
 import React, { useState } from 'react';
-import { TextField, Button, Box, Chip, Paper, Typography, Grid } from '@mui/material';
+import { TextField, Button, Box, Chip, Paper, Typography, Grid, CircularProgress } from '@mui/material';
 import { Line } from 'react-chartjs-2';
 
 const suggestedTickers = ['AAPL', 'GOOGL', 'MSFT', 'AMZN', 'FB', 'TSLA', 'NVDA', 'JPM', 'V', 'JNJ'];
 
-const StockAnalysis = ({ theme, onStockDataFetched }) => {
+const StockAnalysis = ({ theme }) => {
   const [ticker, setTicker] = useState('');
   const [stockData, setStockData] = useState(null);
   const [graphData, setGraphData] = useState(null);
@@ -13,14 +13,29 @@ const StockAnalysis = ({ theme, onStockDataFetched }) => {
   const [error, setError] = useState(null);
 
   const fetchData = async () => {
+    if (!ticker) {
+      setError('Please enter a stock ticker');
+      return;
+    }
+
     setLoading(true);
     setError(null);
+    setStockData(null);
+    setGraphData(null);
+
     try {
       const response = await fetch(`/api/stock?symbol=${ticker}`);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
       const data = await response.json();
-      
+      console.log('API response:', data);  // Log the full response
+
+      if (data.error) {
+        throw new Error(data.error);
+      }
+
       setStockData(data);
-      onStockDataFetched(data);  // Pass data to parent component
       
       if (data.chart && data.chart.result && data.chart.result[0]) {
         const result = data.chart.result[0];
@@ -45,9 +60,10 @@ const StockAnalysis = ({ theme, onStockDataFetched }) => {
       }
     } catch (error) {
       console.error('Error fetching data:', error);
-      setError('Error fetching data. Please try again.');
+      setError(`Error fetching data: ${error.message}`);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const DisplayStockInfo = ({ data }) => {
@@ -58,7 +74,7 @@ const StockAnalysis = ({ theme, onStockDataFetched }) => {
     const stockInfo = data.chart.result[0].meta;
 
     return (
-      <Paper elevation={3} className="p-4">
+      <Paper elevation={3} sx={{ p: 4 }}>
         <Typography variant="h6" gutterBottom>Stock Information</Typography>
         <Typography>Symbol: {stockInfo.symbol || 'N/A'}</Typography>
         <Typography>Currency: {stockInfo.currency || 'N/A'}</Typography>
@@ -78,7 +94,7 @@ const StockAnalysis = ({ theme, onStockDataFetched }) => {
             fullWidth 
             label="Enter Stock Ticker" 
             value={ticker} 
-            onChange={(e) => setTicker(e.target.value)} 
+            onChange={(e) => setTicker(e.target.value.toUpperCase())} 
             variant="outlined"
             sx={{ mb: 2 }}
           />
@@ -100,7 +116,7 @@ const StockAnalysis = ({ theme, onStockDataFetched }) => {
             disabled={loading}
             fullWidth
           >
-            {loading ? 'Fetching...' : 'Analyze Stock'}
+            {loading ? <CircularProgress size={24} color="inherit" /> : 'Analyze Stock'}
           </Button>
         </Paper>
       </Grid>
