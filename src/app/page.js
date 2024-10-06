@@ -8,7 +8,7 @@ import { ThemeProvider, createTheme, useTheme } from '@mui/material/styles';
 import { CssBaseline, AppBar, Toolbar, Typography, Container, TextField, Button, Grid, Paper, List, ListItem, ListItemText, IconButton, Box, Switch, Fab, Dialog, DialogTitle, DialogContent, DialogActions, Chip } from '@mui/material';
 import { Brightness4, Brightness7, Chat } from '@mui/icons-material';
 import { motion } from 'framer-motion';
-import NewsOutlet from '../components/NewsOutlet';  // Import the NewsOutlet component
+import NewsOutlet from './components/NewsOutlet';  // Import the NewsOutlet component
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
 const ColorModeContext = React.createContext({ toggleColorMode: () => {} });
