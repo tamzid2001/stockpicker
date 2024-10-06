@@ -24,7 +24,6 @@ const FeatureCard = ({ Icon, title, description }) => (
   >
     <CardContent sx={{ flexGrow: 1, textAlign: 'center', p: 3 }}>
       <Box sx={{ mb: 2 }}>
-        ${Icon}
         <Icon sx={{ fontSize: 40, color: 'primary.main' }} />
       </Box>
       <Typography gutterBottom variant="h5" component="h2" sx={{ mb: 2 }}>
@@ -49,7 +48,7 @@ const FeatureCards = () => (
       </Grid>
       <Grid item xs={12} sm={6} md={4}>
         <FeatureCard 
-          Icon={<TimelineIcon/>}
+          Icon={TimelineIcon}
           title="Advanced Charting" 
           description="Visualize complex stock patterns with state-of-the-art tools for comprehensive market analysis."
         />
