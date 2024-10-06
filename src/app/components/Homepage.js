@@ -1,6 +1,7 @@
 // components/Homepage.js
 import React from 'react';
-import { Paper, Typography, SignIn } from "@clerk/nextjs";
+import { Paper, Typography } from "@mui/material";
+import { SignInButton } from "@clerk/nextjs";
 import { motion } from 'framer-motion';
 
 const Homepage = () => (
@@ -16,7 +17,23 @@ const Homepage = () => (
       <Typography variant="body1" paragraph>
         Get real-time stock data, earnings information, and AI-powered insights to make informed investment decisions.
       </Typography>
-      <SignIn />
+      <SignInButton mode="modal">
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          style={{
+            backgroundColor: '#1976d2',
+            color: 'white',
+            padding: '10px 20px',
+            border: 'none',
+            borderRadius: '5px',
+            cursor: 'pointer',
+            fontSize: '16px',
+          }}
+        >
+          Sign In
+        </motion.button>
+      </SignInButton>
     </Paper>
   </motion.div>
 );
