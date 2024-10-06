@@ -37,42 +37,42 @@ const FeatureCards = () => (
   <Container sx={{ py: 8 }} maxWidth="lg">
     <Grid container spacing={4}>
       <Grid item xs={12} sm={6} md={4}>
-        <TrendingUpIcon sx={{ fontSize: 16, color: 'primary.main' }} />
+        <TrendingUpIcon />
         <FeatureCard 
           title="Real-Time Analytics" 
           description="Stay ahead with lightning-fast data updates and current stock trends for confident decision-making."
         />
       </Grid>
       <Grid item xs={12} sm={6} md={4}>
-        <TimelineIcon sx={{ fontSize: 16, color: 'primary.main' }} />
+        <TimelineIcon />
         <FeatureCard 
           title="Advanced Charting" 
           description="Visualize complex stock patterns with state-of-the-art tools for comprehensive market analysis."
         />
       </Grid>
       <Grid item xs={12} sm={6} md={4}>
-        <ChatBubbleIcon sx={{ fontSize: 16, color: 'primary.main' }} />
+        <ChatBubbleIcon />
         <FeatureCard 
           title="AI Assistant" 
           description="Get 24/7 expert advice and answers to your investment queries from our AI-powered assistant."
         />
       </Grid>
       <Grid item xs={12} sm={6} md={4}>
-        <InsightsIcon sx={{ fontSize: 16, color: 'primary.main' }} />
+        <InsightsIcon />
         <FeatureCard 
           title="Predictive Insights" 
           description="Leverage AI-driven forecasts to anticipate market trends and position your portfolio for success."
         />
       </Grid>
       <Grid item xs={12} sm={6} md={4}>
-        <NewReleasesIcon sx={{ fontSize: 16, color: 'primary.main' }} />
+        <NewReleasesIcon />
         <FeatureCard 
           title="Breaking News" 
           description="Stay informed with our AI-curated news feed, bringing you market-moving information in real-time."
         />
       </Grid>
       <Grid item xs={12} sm={6} md={4}>
-        <AssessmentIcon sx={{ fontSize: 16, color: 'primary.main' }} />
+        <AssessmentIcon />
         <FeatureCard 
           title="Portfolio Analysis" 
           description="Gain comprehensive insights into your investments with AI-powered risk assessment and optimization tools."
