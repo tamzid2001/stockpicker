@@ -1,6 +1,7 @@
 // components/homepage/WaitingList.js
 import React from 'react';
-import { Container, Typography, Box, TextField, Button } from "@mui/material";
+import { Container, Typography, Box } from "@mui/material";
+import { Input, Button } from '@mui/joy';
 
 const WaitingList = () => (
   <Container maxWidth="sm" sx={{ py: 8 }}>
@@ -11,39 +12,17 @@ const WaitingList = () => (
       Be the first to know when we launch new features. Sign up for our waiting list!
     </Typography>
     <Box component="form" noValidate sx={{ mt: 1 }}>
-      <TextField
-        variant="outlined"
-        margin="normal"
+      <Input
+        placeholder="Enter your email"
         required
         fullWidth
-        id="email"
-        label="Email Address"
-        name="email"
-        autoComplete="email"
-        sx={{
-          '& .MuiOutlinedInput-root': {
-            '& fieldset': {
-              borderColor: 'rgba(0, 0, 0, 0.23)',
-              borderWidth: 2,
-            },
-            '&:hover fieldset': {
-              borderColor: 'primary.main',
-            },
-            '&.Mui-focused fieldset': {
-              borderColor: 'primary.main',
-            },
-          },
-          '& .MuiFormLabel-asterisk': {
-            color: 'error.main',
-          },
-        }}
+        sx={{ mb: 2 }}
       />
       <Button
         type="submit"
         fullWidth
-        variant="contained"
         color="primary"
-        sx={{ mt: 3, mb: 2 }}
+        size="lg"
       >
         Join Waiting List
       </Button>
