@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Paper, Typography, Box, Grid, List, ListItem, ListItemText, CircularProgress } from '@mui/material';
+import { useTicker } from './TickerContext'; // Import useTicker from the TickerContext
 
 const StockFundamentals = () => {
   const { ticker } = useTicker();

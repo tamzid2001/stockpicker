@@ -1,9 +1,10 @@
-// components/EarningsInfo.js
+// components/stocks/EarningsInfo.js
 import React, { useState, useEffect } from 'react';
 import { Paper, Typography, Box, CircularProgress } from '@mui/material';
+import { useTicker } from './TickerContext'; // Import useTicker from the TickerContext
 
 const EarningsInfo = () => {
-  const { ticker } = useTicker();
+  const { ticker } = useTicker(); // Access the global ticker value
   const [earningsData, setEarningsData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -15,13 +16,17 @@ const EarningsInfo = () => {
       setError(null);
       try {
         const response = await fetch(`/api/earnings?symbol=${ticker}`);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
         const data = await response.json();
         setEarningsData(data);
       } catch (error) {
         console.error('Error fetching earnings data:', error);
         setError('Error fetching earnings data. Please try again.');
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     };
 
     fetchEarningsData();
@@ -36,7 +41,7 @@ const EarningsInfo = () => {
   const earningsInfo = earningsData.quoteSummary.result[0].earnings;
 
   return (
-    <Paper elevation={3} className="p-4">
+    <Paper elevation={3} sx={{ p: 4 }}>
       <Typography variant="h6" gutterBottom>Earnings Information</Typography>
       <Typography variant="subtitle1" gutterBottom>Quarterly Earnings</Typography>
       {earningsInfo.earningsChart.quarterly.map((quarter, index) => (
@@ -46,7 +51,7 @@ const EarningsInfo = () => {
           </Typography>
         </Box>
       ))}
-      <Typography variant="subtitle1" gutterBottom className="mt-4">Financial Yearly Data</Typography>
+      <Typography variant="subtitle1" gutterBottom sx={{ mt: 4 }}>Financial Yearly Data</Typography>
       {earningsInfo.financialsChart.yearly.map((year, index) => (
         <Box key={index} mb={1}>
           <Typography>
