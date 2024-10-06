@@ -39,8 +39,8 @@ function App() {
   };
 
   useEffect(() => {
-    console.log(`${ComponentName} mounted with ticker:`, ticker);
-  }, [ticker]);
+    console.log(`${ComponentName} mounted with ticker:`, currentTicker);
+  }, [currentTicker]);
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
