@@ -1,19 +1,48 @@
 // components/Homepage.js
-import React from 'react';
-import { Box } from "@mui/material";
+import React, { Suspense } from 'react';
+import { Box, Typography, CircularProgress } from "@mui/material";
+import ErrorBoundary from './ErrorBoundary';
 import HeroSection from './homepage/HeroSection';
 import FeatureCards from './homepage/FeatureCards';
 import VideoSection from './homepage/VideoSection';
 import WaitingList from './homepage/WaitingList';
 import UserReviews from './homepage/UserReviews';
 
+function LoadingFallback() {
+  return <CircularProgress />;
+}
+
 const Homepage = () => (
   <Box sx={{ bgcolor: 'background.default' }}>
-    <HeroSection />
-    <FeatureCards />
-    <VideoSection />
-    <WaitingList />
-    <UserReviews />
+    <ErrorBoundary fallback={<Typography color="error">Error loading hero section</Typography>}>
+      <Suspense fallback={<LoadingFallback />}>
+        <HeroSection />
+      </Suspense>
+    </ErrorBoundary>
+
+    <ErrorBoundary fallback={<Typography color="error">Error loading feature cards</Typography>}>
+      <Suspense fallback={<LoadingFallback />}>
+        <FeatureCards />
+      </Suspense>
+    </ErrorBoundary>
+
+    <ErrorBoundary fallback={<Typography color="error">Error loading video section</Typography>}>
+      <Suspense fallback={<LoadingFallback />}>
+        <VideoSection />
+      </Suspense>
+    </ErrorBoundary>
+
+    <ErrorBoundary fallback={<Typography color="error">Error loading waiting list</Typography>}>
+      <Suspense fallback={<LoadingFallback />}>
+        <WaitingList />
+      </Suspense>
+    </ErrorBoundary>
+
+    <ErrorBoundary fallback={<Typography color="error">Error loading user reviews</Typography>}>
+      <Suspense fallback={<LoadingFallback />}>
+        <UserReviews />
+      </Suspense>
+    </ErrorBoundary>
   </Box>
 );
 
