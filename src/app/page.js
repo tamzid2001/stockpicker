@@ -7,6 +7,7 @@ import { CssBaseline, Container, Box } from '@mui/material';
 import Header from './components/Header';
 import StockAnalysis from './components/StockAnalysis';
 import EarningsInfo from './components/EarningsInfo';
+import StockFundamentals from './components/StockFundamentals';
 import AIChat from './components/AIChat';
 import Footer from './components/Footer';
 import Homepage from './components/Homepage';
@@ -37,7 +38,12 @@ function App() {
         
         <SignedIn>
           <StockAnalysis theme={theme} onStockDataFetched={handleStockDataFetched} />
-          {currentTicker && <EarningsInfo ticker={currentTicker} />}
+          {currentTicker && (
+            <>
+              <EarningsInfo ticker={currentTicker} />
+              <StockFundamentals ticker={currentTicker} />
+            </>
+          )}
           <NewsOutlet />
         </SignedIn>
       </Container>
