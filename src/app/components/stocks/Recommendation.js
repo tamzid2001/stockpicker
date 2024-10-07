@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { Paper, Typography, CircularProgress, Box, Grid } from '@mui/material';
 import { useTicker } from '../contexts/TickerContext';
 import { useGlobalContext } from '../contexts/GlobalContext';
+import dynamic from "next/dynamic";
 const SymbolOverviewNoSSR = dynamic(
     () => import("react-ts-tradingview-widgets").then((w) => w.SymbolOverview),
     {

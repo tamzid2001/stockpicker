@@ -16,6 +16,7 @@ import CustomML from './CustomML';
 import Ertimur from './Ertimur';
 import { useGlobalContext } from '../contexts/GlobalContext';
 import { useTicker } from '../contexts/TickerContext';
+import dynamic from "next/dynamic";
 const SymbolOverviewNoSSR = dynamic(
   () => import("react-ts-tradingview-widgets").then((w) => w.SymbolOverview),
   {
