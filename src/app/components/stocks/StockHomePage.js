@@ -58,7 +58,7 @@ const StockHomePage = () => {
 
       {ticker && (
         <Paper elevation={3} sx={{ p: 2, mt: 2, boxShadow: 4 }}>
-        <AdvancedRealTimeChart theme="light" autosize symbol={ticker}></AdvancedRealTimeChart>
+        <AdvancedRealTimeChart theme="light" height={400} width="100%" symbol={ticker}></AdvancedRealTimeChart>
           <Tabs
             value={tabIndex}
             onChange={handleTabChange}
