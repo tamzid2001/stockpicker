@@ -1,21 +1,37 @@
 // components/Header.js
 import React from 'react';
-import { AppBar, Toolbar, Typography, IconButton } from '@mui/material';
+import { AppBar, Toolbar, Typography, IconButton, Button, Box } from '@mui/material';
 import { Brightness4, Brightness7 } from '@mui/icons-material';
-import { UserButton, SignedIn } from "@clerk/nextjs";
+import { UserButton, SignedIn, SignedOut, SignInButton } from "@clerk/nextjs";
 
 const Header = ({ colorMode, theme }) => (
-  <AppBar position="static" color="primary">
-    <Toolbar>
-      <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-        Stock Analysis Pro
-      </Typography>
-      <IconButton sx={{ ml: 1 }} onClick={colorMode.toggleColorMode} color="inherit">
-        {theme.palette.mode === 'dark' ? <Brightness7 /> : <Brightness4 />}
-      </IconButton>
-      <SignedIn>
-        <UserButton afterSignOutUrl="/" />
-      </SignedIn>
+  <AppBar position="static" color="primary" elevation={3}>
+    <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
+      {/* Left Section: Logo and Title */}
+      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+        <Typography variant="h6" component="div" sx={{ mr: 2, fontWeight: 'bold' }}>
+          Stock Analysis Pro
+        </Typography>
+        <IconButton onClick={colorMode.toggleColorMode} color="inherit">
+          {theme.palette.mode === 'dark' ? <Brightness7 /> : <Brightness4 />}
+        </IconButton>
+      </Box>
+
+      {/* Right Section: Sign In/Sign Out */}
+      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+        <SignedOut>
+          <Button
+            variant="outlined"
+            color="inherit"
+            sx={{ borderRadius: '20px', ml: 2 }}
+          >
+            <SignInButton />
+          </Button>
+        </SignedOut>
+        <SignedIn>
+          <UserButton afterSignOutUrl="/" />
+        </SignedIn>
+      </Box>
     </Toolbar>
   </AppBar>
 );
