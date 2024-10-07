@@ -1,16 +1,17 @@
 import React, { useState } from 'react';
 import { Box, TextField, Button, Typography, Select, MenuItem, Card, CardContent, Divider, Grid } from '@mui/material';
+import { useGlobalContext } from '../contexts/GlobalContext';
 
 const CustomML = () => {
     const [symbol, setSymbol] = useState('');
     const [interval, setInterval] = useState('1mo');
     const [range, setRange] = useState('5y');
-    const [region, setRegion] = useState('US');
     const [response, setResponse] = useState(null);
+    const { selectedRegion } = useGlobalContext(); // Access region from global context
 
     const fetchData = async () => {
         try {
-            const res = await fetch(`/api/ml?symbol=${symbol}&interval=${interval}&region=${region}&range=${range}`);
+            const res = await fetch(`/api/ml?symbol=${symbol}&interval=${interval}&region=${selectedRegion}&range=${range}`);
             const data = await res.json();
             setResponse(data);
         } catch (error) {
@@ -62,11 +63,6 @@ const CustomML = () => {
                 <Select value={range} onChange={(e) => setRange(e.target.value)} sx={{ minWidth: 120 }}>
                     {['1d', '5d', '1mo', '3mo', '6mo', '1y', '2y', '5y', '10y', 'ytd', 'max'].map((rng) => (
                         <MenuItem key={rng} value={rng}>{rng}</MenuItem>
-                    ))}
-                </Select>
-                <Select value={region} onChange={(e) => setRegion(e.target.value)} sx={{ minWidth: 120 }}>
-                    {['US', 'BR', 'AU', 'CA', 'FR', 'DE', 'HK', 'IN', 'IT', 'ES', 'GB', 'SG'].map((reg) => (
-                        <MenuItem key={reg} value={reg}>{reg}</MenuItem>
                     ))}
                 </Select>
             </Box>
