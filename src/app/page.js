@@ -6,6 +6,7 @@ import { ThemeProvider, createTheme, useTheme } from '@mui/material/styles';
 import { CssBaseline, Container, Box, Typography, CircularProgress } from '@mui/material';
 import ErrorBoundary from './components/website/ErrorBoundary';
 import { TickerProvider, useTicker } from './components/stocks/TickerContext'; // Import the TickerProvider and useTicker
+import { GlobalProvider } from './components/stocks/GlobalContext';
 
 import Header from './components/website/Header';
 import StockAnalysis from './components/stocks/StockAnalysis';
@@ -156,9 +157,11 @@ function ThemedApp() {
         <ThemeProvider theme={theme}>
           <CssBaseline />
           <ClerkProvider publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}>
-            <TickerProvider> {/* Wrap the entire app in the TickerProvider */}
-              <App />
-            </TickerProvider>
+            <GlobalProvider> {/* Wrap the entire app in the GlobalProvider */}
+              <TickerProvider> {/* Wrap within GlobalProvider to ensure both contexts are available */}
+                <App />
+              </TickerProvider>
+            </GlobalProvider>
           </ClerkProvider>
         </ThemeProvider>
       </ColorModeContext.Provider>

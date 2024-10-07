@@ -1,23 +1,21 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { AppBar, Toolbar, Typography, IconButton, Button, Box, Select, MenuItem } from '@mui/material';
 import { Brightness4, Brightness7 } from '@mui/icons-material';
 import { UserButton, SignedIn, SignedOut, SignInButton } from "@clerk/nextjs";
+import { useGlobalContext } from '../stocks/GlobalContext';
 
 const regions = ['US', 'BR', 'AU', 'CA', 'FR', 'DE', 'HK', 'IN', 'IT', 'ES', 'GB', 'SG'];
 const languages = ['en-US', 'pt-BR', 'en-AU', 'en-CA', 'fr-FR', 'de-DE', 'zh-Hant-HK', 'en-IN', 'it-IT', 'es-ES', 'en-GB', 'en-SG'];
 
 const Header = ({ colorMode, theme }) => {
-  const [selectedRegion, setSelectedRegion] = useState('US');
-  const [selectedLanguage, setSelectedLanguage] = useState('en-US');
+  const { selectedRegion, setSelectedRegion, selectedLanguage, setSelectedLanguage } = useGlobalContext();
 
   const handleRegionChange = (event) => {
     setSelectedRegion(event.target.value);
-    // You can add logic here to handle the change in region if needed
   };
 
   const handleLanguageChange = (event) => {
     setSelectedLanguage(event.target.value);
-    // You can add logic here to handle the change in language if needed
   };
 
   return (
@@ -42,7 +40,6 @@ const Header = ({ colorMode, theme }) => {
             value={selectedRegion}
             onChange={handleRegionChange}
             variant="outlined"
-            color="inherit"
             sx={{ mr: 2, minWidth: 100, color: 'white', borderColor: 'white' }}
           >
             {regions.map((region) => (
@@ -57,7 +54,6 @@ const Header = ({ colorMode, theme }) => {
             value={selectedLanguage}
             onChange={handleLanguageChange}
             variant="outlined"
-            color="inherit"
             sx={{ mr: 2, minWidth: 120, color: 'white', borderColor: 'white' }}
           >
             {languages.map((language) => (
