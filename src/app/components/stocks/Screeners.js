@@ -1,5 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Typography, Box, Select, MenuItem, Button, CircularProgress, Paper, Grid } from '@mui/material';
+import dynamic from "next/dynamic";
+const SymbolOverviewNoSSR = dynamic(
+  () => import("react-ts-tradingview-widgets").then((w) => w.SymbolOverview),
+  {
+    ssr: false,
+  }
+);
+import { Screener } from "react-ts-tradingview-widgets";
 
 const screenerOptions = [
     'MOST_ACTIVES',
@@ -46,7 +54,7 @@ const Screeners = () => {
             }
         };
 
-        fetchSymbols();
+        //fetchSymbols();
 
         // Clean up function for the effect
         return () => {
@@ -64,49 +72,7 @@ const Screeners = () => {
                 <Typography variant="h4" gutterBottom align="center">
                     Stock Screeners
                 </Typography>
-                <Box sx={{ mt: 3, mb: 3, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                    <Select
-                        value={selectedScreener}
-                        onChange={handleScreenerChange}
-                        variant="outlined"
-                        sx={{ minWidth: 200, mr: 2 }}
-                    >
-                        {screenerOptions.map((option) => (
-                            <MenuItem key={option} value={option}>
-                                {option.replace(/_/g, ' ')}
-                            </MenuItem>
-                        ))}
-                    </Select>
-                    <Button variant="contained" color="primary" onClick={() => setSelectedScreener(selectedScreener)}>
-                        Refresh
-                    </Button>
-                </Box>
-                {loading ? (
-                    <Box display="flex" justifyContent="center" alignItems="center" sx={{ py: 4 }}>
-                        <CircularProgress />
-                    </Box>
-                ) : error ? (
-                    <Typography color="error" align="center" sx={{ mt: 2 }}>
-                        {error}
-                    </Typography>
-                ) : symbols.length === 0 ? (
-                    <Typography align="center" sx={{ mt: 2 }}>
-                        No symbols found for the selected screener.
-                    </Typography>
-                ) : (
-                    <Grid container spacing={2}>
-                        {symbols.map((symbol, index) => (
-                            <Grid item xs={12} sm={6} key={index}>
-                                <Paper elevation={2} sx={{ p: 2 }}>
-                                    <Typography variant="h6">{symbol.symbol || 'N/A'}</Typography>
-                                    <Typography variant="body2">Name: {symbol.shortName || 'N/A'}</Typography>
-                                    <Typography variant="body2">Exchange: {symbol.fullExchangeName || 'N/A'}</Typography>
-                                    <Typography variant="body2">Market Price: ${symbol.regularMarketPrice ? symbol.regularMarketPrice.toFixed(2) : 'N/A'}</Typography>
-                                </Paper>
-                            </Grid>
-                        ))}
-                    </Grid>
-                )}
+                <Screener colorTheme="light" width="100%" height={300}></Screener>
             </Paper>
         </Container>
     );
