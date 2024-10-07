@@ -1,7 +1,7 @@
 import React from 'react';
 import { AppBar, Toolbar, Typography, IconButton, Button, Box, Select, MenuItem } from '@mui/material';
 import { Brightness4, Brightness7 } from '@mui/icons-material';
-import { UserButton, SignedIn, SignedOut, SignInButton } from "@clerk/nextjs";
+import { UserButton, SignedIn, SignedOut, SignInButton, useUser } from "@clerk/nextjs";
 import { useGlobalContext } from '../contexts/GlobalContext';
 
 const regions = ['US', 'BR', 'AU', 'CA', 'FR', 'DE', 'HK', 'IN', 'IT', 'ES', 'GB', 'SG'];
@@ -9,6 +9,7 @@ const languages = ['en-US', 'pt-BR', 'en-AU', 'en-CA', 'fr-FR', 'de-DE', 'zh-Han
 
 const Header = ({ colorMode, theme }) => {
   const { selectedRegion, setSelectedRegion, selectedLanguage, setSelectedLanguage } = useGlobalContext();
+  const { isLoaded, isSignedIn } = useUser(); // Get user state
 
   const handleRegionChange = (event) => {
     setSelectedRegion(event.target.value);
@@ -17,6 +18,9 @@ const Header = ({ colorMode, theme }) => {
   const handleLanguageChange = (event) => {
     setSelectedLanguage(event.target.value);
   };
+
+  // URL for Stripe premium subscription page
+  const stripeSubscriptionUrl = 'https://stripe.com/premium-subscription-url';
 
   return (
     <AppBar position="static" color="primary" elevation={3}>
@@ -62,6 +66,28 @@ const Header = ({ colorMode, theme }) => {
               </MenuItem>
             ))}
           </Select>
+
+          {/* Premium Subscription Button */}
+          <SignedIn>
+            <Button
+              variant="contained"
+              color="secondary"
+              sx={{ borderRadius: '20px', ml: 2 }}
+              onClick={() => window.location.href = stripeSubscriptionUrl}
+            >
+              Get Premium
+            </Button>
+          </SignedIn>
+          <SignedOut>
+            <Button
+              variant="contained"
+              color="secondary"
+              sx={{ borderRadius: '20px', ml: 2 }}
+              onClick={() => window.location.href = '/sign-in'}
+            >
+              Get Premium
+            </Button>
+          </SignedOut>
 
           {/* Sign In/Sign Out */}
           <SignedOut>
