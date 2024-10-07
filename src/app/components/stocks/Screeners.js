@@ -1,5 +1,3 @@
-// components/Screeners.js
-
 import React, { useState, useEffect } from 'react';
 import { Container, Typography, Box, Select, MenuItem, Button, CircularProgress, Paper, Grid } from '@mui/material';
 
@@ -20,30 +18,40 @@ const Screeners = () => {
     const [error, setError] = useState(null);
 
     useEffect(() => {
+        // AbortController to clean up ongoing fetch requests on component unmount or change
+        const controller = new AbortController();
         const fetchSymbols = async () => {
             setLoading(true);
             setError(null);
             try {
-                const response = await fetch(`/api/screener?scrIds=${selectedScreener}`);
+                const response = await fetch(`/api/screener?scrIds=${selectedScreener}`, {
+                    signal: controller.signal,
+                });
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 const data = await response.json();
-                if (data.finance && data.finance.result && data.finance.result[0] && data.finance.result[0].quotes) {
+                if (data?.finance?.result?.[0]?.quotes) {
                     setSymbols(data.finance.result[0].quotes);
-                    console.log(data);
                 } else {
                     throw new Error('Invalid data structure received from the API');
                 }
             } catch (error) {
-                console.error('Error fetching screener data:', error);
-                setError('Error fetching screener data. Please try again later.');
+                if (error.name !== 'AbortError') {
+                    console.error('Error fetching screener data:', error);
+                    setError('Error fetching screener data. Please try again later.');
+                }
             } finally {
                 setLoading(false);
             }
         };
 
         fetchSymbols();
+
+        // Clean up function for the effect
+        return () => {
+            controller.abort();
+        };
     }, [selectedScreener]);
 
     const handleScreenerChange = (event) => {
@@ -93,7 +101,7 @@ const Screeners = () => {
                                     <Typography variant="h6">{symbol.symbol || 'N/A'}</Typography>
                                     <Typography variant="body2">Name: {symbol.shortName || 'N/A'}</Typography>
                                     <Typography variant="body2">Exchange: {symbol.fullExchangeName || 'N/A'}</Typography>
-                                    <Typography variant="body2">Market Price: ${symbol.regularMarketPrice || 'N/A'}</Typography>
+                                    <Typography variant="body2">Market Price: ${symbol.regularMarketPrice ? symbol.regularMarketPrice.toFixed(2) : 'N/A'}</Typography>
                                 </Paper>
                             </Grid>
                         ))}
