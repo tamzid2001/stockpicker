@@ -27,7 +27,7 @@ const Screeners = () => {
         setLoading(true);
         setError(null);
         try {
-            const response = await fetch(`/api/screeners?scrIds=${selectedScreener}`);
+            const response = await fetch(`/api/screener?scrIds=${selectedScreener}`);
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
