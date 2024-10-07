@@ -21,7 +21,7 @@ const Homepage = () => (
       </Suspense>
     </ErrorBoundary>
 
-    <ErrorBoundary fallback={<Typography color="error">Error loading hero section</Typography>}>
+    {/* <ErrorBoundary fallback={<Typography color="error">Error loading hero section</Typography>}>
       <Suspense fallback={<LoadingFallback />}>
         <About />
       </Suspense>
@@ -31,7 +31,7 @@ const Homepage = () => (
       <Suspense fallback={<LoadingFallback />}>
         <Contact />
       </Suspense>
-    </ErrorBoundary>
+    </ErrorBoundary> */}
 
     <ErrorBoundary fallback={<Typography color="error">Error loading feature cards</Typography>}>
       <Suspense fallback={<LoadingFallback />}>
