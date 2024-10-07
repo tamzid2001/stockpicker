@@ -47,27 +47,6 @@ const StockHomePage = () => {
           </Suspense>
         </ErrorBoundary>
       </Paper>
-      
-      <Box sx={{ mt: 4 }}>
-        <Typography variant="h5" gutterBottom>
-          Input Ticker for Further Details
-        </Typography>
-        <Box display="flex" alignItems="center" sx={{ mb: 2 }}>
-          <TextField
-            label="Ticker"
-            value={inputTicker}
-            onChange={handleInputChange}
-            variant="outlined"
-            sx={{ mr: 2 }}
-          />
-          <Button variant="contained" color="primary" onClick={handleTickerSubmit}>
-            Submit
-          </Button>
-        </Box>
-        <Typography variant="subtitle1" gutterBottom color="textSecondary">
-          Region: {selectedRegion} | Language: {selectedLanguage}
-        </Typography>
-      </Box>
 
       {ticker && (
         <Paper elevation={3} sx={{ p: 2, mt: 2, boxShadow: 4 }}>

@@ -33,60 +33,6 @@ const StockAnalysis = ({ theme }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const fetchData = async () => {
-    if (!ticker) {
-      setError('Please enter a stock ticker');
-      return;
-    }
-
-    setLoading(true);
-    setError(null);
-    setStockData(null);
-    setGraphData(null);
-
-    try {
-      const response = await fetch(`/api/stock?symbol=${ticker}`);
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      const data = await response.json();
-      console.log('API response:', data);
-
-      if (data.error) {
-        throw new Error(data.error);
-      }
-
-      setStockData(data);
-      
-      if (data.chart && data.chart.result && data.chart.result[0]) {
-        const result = data.chart.result[0];
-        const timestamps = result.timestamp || [];
-        const closePrices = result.indicators.quote[0].close || [];
-
-        const dataLimit = 50;
-        const step = Math.ceil(timestamps.length / dataLimit);
-
-        setGraphData({
-          labels: timestamps.filter((_, index) => index % step === 0).map(ts => new Date(ts * 1000).toLocaleDateString()),
-          datasets: [{
-            label: 'Stock Price',
-            data: closePrices.filter((_, index) => index % step === 0),
-            borderColor: theme.palette.primary.main,
-            backgroundColor: theme.palette.primary.light,
-            tension: 0.1
-          }]
-        });
-      } else {
-        setError('Invalid data structure received from the stock API');
-      }
-    } catch (error) {
-      console.error('Error fetching data:', error);
-      setError(`Error fetching data: ${error.message}`);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const DisplayStockInfo = ({ data }) => {
     if (!data || !data.chart || !data.chart.result || !data.chart.result[0]) {
       return <Typography color="error">No stock data available</Typography>;
@@ -112,15 +58,6 @@ const StockAnalysis = ({ theme }) => {
       <Grid item xs={12}>
         <Paper elevation={3} sx={{ p: 4 }}>
           <TickerInput /> {/* Use the TickerInput component */}
-          <Button 
-            variant="contained" 
-            color="primary" 
-            onClick={fetchData} 
-            disabled={loading}
-            fullWidth
-          >
-            {loading ? <CircularProgress size={24} color="inherit" /> : 'Analyze Stock'}
-          </Button>
         </Paper>
       </Grid>
 
