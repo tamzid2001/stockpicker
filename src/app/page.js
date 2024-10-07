@@ -1,27 +1,19 @@
 'use client';
 
-import React, { Suspense, lazy, useContext, useState } from 'react';
+import React, { Suspense, useContext, useState } from 'react';
 import { ClerkProvider, SignedIn, SignedOut } from "@clerk/nextjs";
 import { ThemeProvider, createTheme, useTheme } from '@mui/material/styles';
 import { CssBaseline, Container, Box, Typography, CircularProgress } from '@mui/material';
 import ErrorBoundary from './components/website/ErrorBoundary';
-import { TickerProvider, useTicker } from './components/contexts/TickerContext'; // Import the TickerProvider and useTicker
+import { TickerProvider, useTicker } from './components/contexts/TickerContext';
 import { GlobalProvider } from './components/contexts/GlobalContext';
 
 import Header from './components/website/Header';
-import StockAnalysis from './components/stocks/StockAnalysis';
-import EarningsInfo from './components/stocks/EarningsInfo';
-import StockFundamentals from './components/stocks/StockFundamentals';
-import StockStatistics from './components/stocks/Statistics';
-import AIChat from './components/website/AIChat';
 import Footer from './components/website/Footer';
-import Homepage from './components/website/Homepage';
+import AIChat from './components/website/AIChat';
+import StockHomePage from './components/stocks/StockHomePage'; // For signed-in users
+import Homepage from './components/website/Homepage'; // For signed-out users
 import NewsOutlet from './components/website/NewsOutlet';
-import StockOptions from './components/stocks/StockOptions';
-//import StockScreener from './components/stocks/Screeners';
-import Analyst from './components/stocks/Analyst'
-import Recommendation from './components/stocks/Recommendation';
-import RecentUpdates from './components/stocks/RecentUpdates';
 
 const ColorModeContext = React.createContext({ toggleColorMode: () => {} });
 
@@ -32,13 +24,13 @@ function LoadingFallback() {
 function App() {
   const theme = useTheme();
   const colorMode = useContext(ColorModeContext);
-  const { ticker, setTicker } = useTicker(); // Access the global ticker using the useTicker hook
+  const { ticker, setTicker } = useTicker();
   const [stockData, setStockData] = useState(null);
 
   const handleStockDataFetched = (data) => {
     if (data && data.chart && data.chart.result && data.chart.result[0] && data.chart.result[0].meta) {
       setStockData(data);
-      setTicker(data.chart.result[0].meta.symbol); // Update the global ticker
+      setTicker(data.chart.result[0].meta.symbol);
     } else {
       console.error('Invalid stock data structure:', data);
     }
@@ -62,64 +54,11 @@ function App() {
         </SignedOut>
         
         <SignedIn>
-          {/* <ErrorBoundary fallback={<Typography color="error">Error loading stock screener</Typography>}>
+          <ErrorBoundary fallback={<Typography color="error">Error loading stock home page</Typography>}>
             <Suspense fallback={<LoadingFallback />}>
-              <StockScreener />
-            </Suspense>
-          </ErrorBoundary> */}
-
-          <ErrorBoundary fallback={<Typography color="error">Error loading stock analysis</Typography>}>
-            <Suspense fallback={<LoadingFallback />}>
-              <StockAnalysis theme={theme} onStockDataFetched={handleStockDataFetched} />
+              <StockHomePage onStockDataFetched={handleStockDataFetched} />
             </Suspense>
           </ErrorBoundary>
-          
-          {ticker && (
-            <Box>
-              <Typography variant="h6" gutterBottom>Additional Information for {ticker}</Typography>
-              <ErrorBoundary fallback={<Typography color="error">Error loading earnings info</Typography>}>
-                <Suspense fallback={<LoadingFallback />}>
-                  <EarningsInfo ticker={ticker} />
-                </Suspense>
-              </ErrorBoundary>
-              
-              <ErrorBoundary fallback={<Typography color="error">Error loading stock fundamentals</Typography>}>
-                <Suspense fallback={<LoadingFallback />}>
-                  <StockFundamentals ticker={ticker} />
-                </Suspense>
-              </ErrorBoundary>
-
-              <ErrorBoundary fallback={<Typography color="error">Error loading stock statistics</Typography>}>
-                <Suspense fallback={<LoadingFallback />}>
-                  <StockStatistics ticker={ticker} />
-                </Suspense>
-              </ErrorBoundary>
-
-              <ErrorBoundary fallback={<Typography color="error">Error loading stock statistics</Typography>}>
-                <Suspense fallback={<LoadingFallback />}>
-                  <Recommendation ticker={ticker} />
-                </Suspense>
-              </ErrorBoundary>
-
-              <ErrorBoundary fallback={<Typography color="error">Error loading earnings info</Typography>}>
-                <Suspense fallback={<LoadingFallback />}>
-                  <RecentUpdates ticker={ticker} />
-                </Suspense>
-              </ErrorBoundary>
-
-              <ErrorBoundary fallback={<Typography color="error">Error loading analyst info</Typography>}>
-                <Suspense fallback={<LoadingFallback />}>
-                  <Analyst ticker={ticker} />
-                </Suspense>
-              </ErrorBoundary>
-
-              <ErrorBoundary fallback={<Typography color="error">Error loading stock statistics</Typography>}>
-                <Suspense fallback={<LoadingFallback />}>
-                  <StockOptions ticker={ticker} />
-                </Suspense>
-              </ErrorBoundary>
-            </Box>
-          )}
         </SignedIn>
 
         <ErrorBoundary fallback={<Typography color="error">Error loading news</Typography>}>
@@ -177,8 +116,8 @@ function ThemedApp() {
         <ThemeProvider theme={theme}>
           <CssBaseline />
           <ClerkProvider publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}>
-            <GlobalProvider> {/* Wrap the entire app in the GlobalProvider */}
-              <TickerProvider> {/* Wrap within GlobalProvider to ensure both contexts are available */}
+            <GlobalProvider>
+              <TickerProvider>
                 <App />
               </TickerProvider>
             </GlobalProvider>
