@@ -7,7 +7,7 @@ const SymbolOverviewNoSSR = dynamic(
     ssr: false,
   }
 );
-import { Screener } from "react-ts-tradingview-widgets";
+import { MarketData } from "react-ts-tradingview-widgets";
 
 const screenerOptions = [
     'MOST_ACTIVES',
@@ -72,7 +72,7 @@ const Screeners = () => {
                 <Typography variant="h4" gutterBottom align="center">
                     Stock Screeners
                 </Typography>
-                {/* <Screener colorTheme="light" width="100%" height={300}></Screener> */}
+                <MarketData colorTheme="dark" width="100%" height={400}></MarketData>
             </Paper>
         </Container>
     );
