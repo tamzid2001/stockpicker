@@ -4,7 +4,6 @@ import { Brightness4, Brightness7 } from '@mui/icons-material';
 import { UserButton, SignedIn, SignedOut, SignInButton, useUser } from "@clerk/nextjs";
 import { useGlobalContext } from '../contexts/GlobalContext';
 import { useTheme } from '@mui/material/styles';
-import Script from 'next/script';
 
 const regions = ['US', 'BR', 'AU', 'CA', 'FR', 'DE', 'HK', 'IN', 'IT', 'ES', 'GB', 'SG'];
 const languages = ['en-US', 'pt-BR', 'en-AU', 'en-CA', 'fr-FR', 'de-DE', 'zh-Hant-HK', 'en-IN', 'it-IT', 'es-ES', 'en-GB', 'en-SG'];
@@ -14,27 +13,6 @@ const Header = ({ colorMode, theme }) => {
   const { isLoaded, isSignedIn } = useUser();
   const muiTheme = useTheme();
   const isMobile = useMediaQuery(muiTheme.breakpoints.down('sm'));
-  const tradingViewRef = useRef(null);
-
-  useEffect(() => {
-    if (typeof window !== 'undefined' && window.TradingView) {
-      new window.TradingView.widget({
-        container_id: tradingViewRef.current.id,
-        symbols: [
-          { proName: "FOREXCOM:SPXUSD", title: "S&P 500 Index" },
-          { proName: "FOREXCOM:NSXUSD", title: "US 100 Cash CFD" },
-          { proName: "FX_IDC:EURUSD", title: "EUR to USD" },
-          { proName: "BITSTAMP:BTCUSD", title: "Bitcoin" },
-          { proName: "BITSTAMP:ETHUSD", title: "Ethereum" },
-        ],
-        showSymbolLogo: true,
-        isTransparent: false,
-        displayMode: "adaptive",
-        colorTheme: theme.palette.mode,
-        locale: "en",
-      });
-    }
-  }, [theme.palette.mode]);
 
   const handleRegionChange = (event) => {
     setSelectedRegion(event.target.value);
@@ -49,34 +27,6 @@ const Header = ({ colorMode, theme }) => {
 
   return (
     <>
-      {/* TradingView Widget */}
-      <Box sx={{ width: '100%', backgroundColor: 'white', py: 1 }}>
-        <div ref={tradingViewRef} id="tradingview-widget" style={{ overflow: 'hidden', width: '100%' }}></div>
-        <Script
-          id="tradingview-widget-script"
-          src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js"
-          strategy="lazyOnload"
-          onLoad={() => {
-            if (typeof window !== 'undefined' && window.TradingView) {
-              new window.TradingView.widget({
-                container_id: 'tradingview-widget',
-                symbols: [
-                  { proName: "FOREXCOM:SPXUSD", title: "S&P 500 Index" },
-                  { proName: "FOREXCOM:NSXUSD", title: "US 100 Cash CFD" },
-                  { proName: "FX_IDC:EURUSD", title: "EUR to USD" },
-                  { proName: "BITSTAMP:BTCUSD", title: "Bitcoin" },
-                  { proName: "BITSTAMP:ETHUSD", title: "Ethereum" },
-                ],
-                showSymbolLogo: true,
-                isTransparent: false,
-                displayMode: "adaptive",
-                colorTheme: theme.palette.mode,
-                locale: "en",
-              });
-            }
-          }}
-        />
-      </Box>
 
       <AppBar position="static" color="primary" elevation={3} sx={{ width: '100%', boxShadow: 4 }}>
         <Toolbar sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between' }}>
