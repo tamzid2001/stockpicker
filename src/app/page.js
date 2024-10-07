@@ -18,6 +18,7 @@ const Footer = lazy(() => import('./components/website/Footer'));
 const Homepage = lazy(() => import('./components/website/Homepage'));
 const NewsOutlet = lazy(() => import('./components/website/NewsOutlet'));
 const StockOptions = lazy(() => import('./components/stocks/StockOptions'));
+const StockScreener = lazy(() => import('./components/stocks/Screeners'));
 
 const ColorModeContext = React.createContext({ toggleColorMode: () => {} });
 
@@ -58,6 +59,12 @@ function App() {
         </SignedOut>
         
         <SignedIn>
+          <ErrorBoundary fallback={<Typography color="error">Error loading stock analysis</Typography>}>
+            <Suspense fallback={<LoadingFallback />}>
+              <StockScreener />
+            </Suspense>
+          </ErrorBoundary>
+
           <ErrorBoundary fallback={<Typography color="error">Error loading stock analysis</Typography>}>
             <Suspense fallback={<LoadingFallback />}>
               <StockAnalysis theme={theme} onStockDataFetched={handleStockDataFetched} />
