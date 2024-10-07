@@ -3,7 +3,7 @@ import React from 'react';
 import { TextField, Box, Chip } from '@mui/material';
 import { useTicker } from '../contexts/TickerContext';
 
-const suggestedTickers = ['AAPL', 'GOOGL', 'MSFT', 'AMZN', 'FB', 'TSLA', 'NVDA', 'JPM', 'V', 'JNJ'];
+const suggestedTickers = ['AAPL', 'GOOGL', 'MSFT', 'AMZN', 'META', 'TSLA', 'NVDA', 'JPM', 'V', 'JNJ'];
 
 const TickerInput = () => {
   const { ticker, setTicker } = useTicker();
