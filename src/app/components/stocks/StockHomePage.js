@@ -69,7 +69,7 @@ const StockHomePage = () => {
             <Tab label="Stock Options" />
             <Tab label="Insider Transactions" />
             <Tab label="Custom ML" />
-            <Tab label="Ertimur" />
+            {/* <Tab label="Ertimur" /> */}
           </Tabs>
           <Box sx={{ p: 3 }}>
             {tabIndex === 0 && (
