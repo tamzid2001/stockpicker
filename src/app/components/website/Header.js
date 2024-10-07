@@ -5,6 +5,17 @@ import { UserButton, SignedIn, SignedOut, SignInButton, useUser } from "@clerk/n
 import { useGlobalContext } from '../contexts/GlobalContext';
 import { useTheme } from '@mui/material/styles';
 
+import dynamic from "next/dynamic";
+const SymbolOverviewNoSSR = dynamic(
+  () => import("react-ts-tradingview-widgets").then((w) => w.SymbolOverview),
+  {
+    ssr: false,
+  }
+);
+
+import { AdvancedRealTimeChart } from "react-ts-tradingview-widgets";
+import { TickerTape } from "react-ts-tradingview-widgets";
+
 const regions = ['US', 'BR', 'AU', 'CA', 'FR', 'DE', 'HK', 'IN', 'IT', 'ES', 'GB', 'SG'];
 const languages = ['en-US', 'pt-BR', 'en-AU', 'en-CA', 'fr-FR', 'de-DE', 'zh-Hant-HK', 'en-IN', 'it-IT', 'es-ES', 'en-GB', 'en-SG'];
 
@@ -110,6 +121,7 @@ const Header = ({ colorMode, theme }) => {
           </Box>
         </Toolbar>
       </AppBar>
+      <TickerTape colorTheme="dark"></TickerTape>
     </>
   );
 };
