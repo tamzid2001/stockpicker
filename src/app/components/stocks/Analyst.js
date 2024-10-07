@@ -7,8 +7,8 @@ import { useRegion, useLanguage } from '../contexts/GlobalContext'; // Import gl
 
 const AnalystReports = () => {
     const { ticker } = useTicker(); // Get the ticker from global context
-    const { region } = useRegion();
-    const { language } = useLanguage();
+    const region = useRegion(); // Correctly access the region context
+    const language = useLanguage(); // Correctly access the language context
     const [reports, setReports] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -64,7 +64,12 @@ const AnalystReports = () => {
                         <Grid item xs={12} key={index}>
                             <Paper elevation={2} sx={{ p: 3, display: 'flex', alignItems: 'center' }}>
                                 <Box sx={{ flexShrink: 0, mr: 2 }}>
-                                    <img src={report.snapshot_url} alt={report.report_title} width="100" />
+                                    <img
+                                        src={report.snapshot_url}
+                                        alt={report.report_title}
+                                        width="100"
+                                        onError={(e) => e.target.style.display = 'none'}
+                                    />
                                 </Box>
                                 <Box sx={{ flexGrow: 1 }}>
                                     <Typography variant="h6">{report.report_title}</Typography>
