@@ -59,7 +59,7 @@ function App() {
         </SignedOut>
         
         <SignedIn>
-          <ErrorBoundary fallback={<Typography color="error">Error loading stock analysis</Typography>}>
+          <ErrorBoundary fallback={<Typography color="error">Error loading stock screener</Typography>}>
             <Suspense fallback={<LoadingFallback />}>
               <StockScreener />
             </Suspense>

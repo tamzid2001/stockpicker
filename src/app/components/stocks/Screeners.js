@@ -31,6 +31,7 @@ const Screeners = () => {
                 const data = await response.json();
                 if (data.finance && data.finance.result && data.finance.result[0] && data.finance.result[0].quotes) {
                     setSymbols(data.finance.result[0].quotes);
+                    console.log(data);
                 } else {
                     throw new Error('Invalid data structure received from the API');
                 }
