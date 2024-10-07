@@ -1,9 +1,9 @@
 // components/AIChat.js
+
 import React, { useState } from 'react';
 import { 
   Fab, Dialog, DialogTitle, DialogContent, DialogActions, 
-  Button, TextField, List, ListItem, ListItemText, Box, IconButton, 
-  Avatar, Typography 
+  Button, TextField, List, ListItem, ListItemText, Box, Avatar, Typography 
 } from '@mui/material';
 import { Chat, ThumbUp, ThumbDown, Person, SmartToy } from '@mui/icons-material';
 
@@ -11,6 +11,7 @@ const AIChat = ({ stockData }) => {
   const [chatOpen, setChatOpen] = useState(false);
   const [chatMessages, setChatMessages] = useState([]);
   const [userMessage, setUserMessage] = useState('');
+  const [feedbackGiven, setFeedbackGiven] = useState({}); // Track feedback state
 
   const handleChatSubmit = async () => {
     if (!userMessage.trim()) return;
@@ -36,7 +37,11 @@ const AIChat = ({ stockData }) => {
         const { done, value } = await reader.read();
         if (done) break;
         aiResponse += decoder.decode(value);
-        setChatMessages(prev => [...prev, { role: 'assistant', content: aiResponse }]);
+        setChatMessages(prev => {
+          const newMessages = [...prev];
+          newMessages[newMessages.length - 1] = { role: 'assistant', content: aiResponse };
+          return newMessages;
+        });
       }
     } catch (error) {
       console.error('Error in AI chat:', error);
@@ -45,6 +50,7 @@ const AIChat = ({ stockData }) => {
   };
 
   const handleFeedback = (index, feedback) => {
+    setFeedbackGiven(prev => ({ ...prev, [index]: feedback }));
     console.log(`Feedback for message ${index}: ${feedback}`);
     // Handle feedback logic (e.g., send to server, update state, etc.)
   };
@@ -77,7 +83,7 @@ const AIChat = ({ stockData }) => {
                     <Typography variant="body2">{message.content}</Typography>
                   </Box>
                 </Box>
-                {message.role === 'assistant' && (
+                {message.role === 'assistant' && !feedbackGiven[index] && (
                   <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1 }}>
                     <IconButton 
                       color="primary" 
@@ -92,6 +98,11 @@ const AIChat = ({ stockData }) => {
                       <ThumbDown />
                     </IconButton>
                   </Box>
+                )}
+                {message.role === 'assistant' && feedbackGiven[index] && (
+                  <Typography variant="body2" sx={{ mt: 1, color: feedbackGiven[index] === 'like' ? 'green' : 'red' }}>
+                    {feedbackGiven[index] === 'like' ? 'You liked this response' : 'You disliked this response'}
+                  </Typography>
                 )}
               </ListItem>
             ))}
