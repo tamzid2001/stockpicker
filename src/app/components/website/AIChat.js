@@ -1,28 +1,35 @@
 import React, { useState } from 'react';
 import { 
   Drawer, IconButton, Box, Avatar, Typography, TextField, List, ListItem, Divider,
-  Button, Fab, Badge
+  Button, Fab, Badge, Input
 } from '@mui/material';
-import { Chat, ThumbUp, ThumbDown, Person, SmartToy, Close, Info } from '@mui/icons-material';
+import { Chat, ThumbUp, ThumbDown, Person, SmartToy, Close, Info, AttachFile, Mic } from '@mui/icons-material';
 
 const AIChat = ({ stockData }) => {
   const [chatOpen, setChatOpen] = useState(false);
   const [chatMessages, setChatMessages] = useState([]);
   const [userMessage, setUserMessage] = useState('');
-  const [feedbackGiven, setFeedbackGiven] = useState({}); // Track feedback state
+  const [feedbackGiven, setFeedbackGiven] = useState({});
+  const [selectedFile, setSelectedFile] = useState(null);
 
   const handleChatSubmit = async () => {
-    if (!userMessage.trim()) return;
+    if (!userMessage.trim() && !selectedFile) return;
 
     const newUserMessage = { role: 'user', content: userMessage, stockData: stockData };
     setChatMessages(prev => [...prev, newUserMessage]);
     setUserMessage('');
 
+    // Prepare form data
+    const formData = new FormData();
+    formData.append('data', JSON.stringify([...chatMessages, newUserMessage]));
+    if (selectedFile) {
+      formData.append('file', selectedFile);
+    }
+
     try {
       const response = await fetch('/api/ai', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify([...chatMessages, newUserMessage]),
+        body: formData,
       });
 
       if (!response.body) throw new Error('No response body');
@@ -48,13 +55,21 @@ const AIChat = ({ stockData }) => {
         ...prev,
         { role: 'assistant', content: 'Sorry, I encountered an error. Please try again.' }
       ]);
+    } finally {
+      setSelectedFile(null); // Reset file after submission
+    }
+  };
+
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      setSelectedFile(file);
     }
   };
 
   const handleFeedback = (index, feedback) => {
     setFeedbackGiven(prev => ({ ...prev, [index]: feedback }));
     console.log(`Feedback for message ${index}: ${feedback}`);
-    // Handle feedback logic (e.g., send to server, update state, etc.)
   };
 
   return (
@@ -96,7 +111,7 @@ const AIChat = ({ stockData }) => {
             <strong>How it works:</strong>
           </Typography>
           <Typography variant="body2">
-            StockBot is your AI assistant for stock analysis. Ask questions about stocks, get real-time insights, and understand market trends.
+            StockBot is your AI assistant for stock analysis. Ask questions about stocks, get real-time insights, and understand market trends. You can also upload files or voice notes for further assistance.
           </Typography>
         </Box>
 
@@ -151,15 +166,19 @@ const AIChat = ({ stockData }) => {
             onKeyPress={(e) => e.key === 'Enter' && handleChatSubmit()}
             sx={{ mt: 2 }}
           />
-          <Button
-            onClick={handleChatSubmit}
-            color="primary"
-            variant="contained"
-            fullWidth
-            sx={{ mt: 2 }}
-          >
-            Send
-          </Button>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 2 }}>
+            <IconButton component="label">
+              <AttachFile />
+              <input type="file" hidden onChange={handleFileChange} />
+            </IconButton>
+            <Button
+              onClick={handleChatSubmit}
+              color="primary"
+              variant="contained"
+            >
+              Send
+            </Button>
+          </Box>
         </Box>
       </Drawer>
     </>
