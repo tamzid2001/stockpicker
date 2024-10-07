@@ -11,7 +11,9 @@ import RecentUpdates from './RecentUpdates';
 import Analyst from './Analyst';
 import StockOptions from './StockOptions';
 import StockScreener from './Screeners';
-import Insiders from './Insider'; // Importing the new Insiders component
+import Insiders from './Insider';
+import CustomML from './CustomML'; // Importing the CustomML component
+import Ertimur from './Ertimur'; // Importing the Ertimur component
 import { useGlobalContext } from '../contexts/GlobalContext';
 import { useTicker } from '../contexts/TickerContext';
 
@@ -51,7 +53,9 @@ const StockHomePage = () => {
           <Tab label="Recent Updates" />
           <Tab label="Analyst Reports" />
           <Tab label="Stock Options" />
-          <Tab label="Insider Transactions" /> {/* New Insiders tab */}
+          <Tab label="Insider Transactions" />
+          <Tab label="Custom ML" /> {/* New CustomML tab */}
+          <Tab label="Ertimur" /> {/* New Ertimur tab */}
         </Tabs>
         <Box sx={{ p: 3 }}>
           {tabIndex === 0 && (
@@ -120,7 +124,21 @@ const StockHomePage = () => {
           {tabIndex === 9 && (
             <ErrorBoundary fallback={<Typography color="error">Error loading insider transactions</Typography>}>
               <Suspense fallback={<LoadingFallback />}>
-                <Insiders ticker={ticker} region={selectedRegion} /> {/* Passing ticker and region */}
+                <Insiders ticker={ticker} region={selectedRegion} />
+              </Suspense>
+            </ErrorBoundary>
+          )}
+          {tabIndex === 10 && (
+            <ErrorBoundary fallback={<Typography color="error">Error loading Custom ML</Typography>}>
+              <Suspense fallback={<LoadingFallback />}>
+                <CustomML ticker={ticker} />
+              </Suspense>
+            </ErrorBoundary>
+          )}
+          {tabIndex === 11 && (
+            <ErrorBoundary fallback={<Typography color="error">Error loading Ertimur</Typography>}>
+              <Suspense fallback={<LoadingFallback />}>
+                <Ertimur ticker={ticker} />
               </Suspense>
             </ErrorBoundary>
           )}
