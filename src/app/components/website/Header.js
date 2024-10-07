@@ -83,7 +83,7 @@ const Header = ({ colorMode, theme }) => {
               variant="contained"
               color="secondary"
               sx={{ borderRadius: '20px', ml: 2 }}
-              onClick={() => window.location.href = '/sign-in'}
+              // onClick={() => window.location.href = '/sign-in'}
             >
               Get Premium
             </Button>
