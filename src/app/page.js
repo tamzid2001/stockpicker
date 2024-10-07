@@ -17,8 +17,8 @@ const AIChat = lazy(() => import('./components/website/AIChat'));
 const Footer = lazy(() => import('./components/website/Footer'));
 const Homepage = lazy(() => import('./components/website/Homepage'));
 const NewsOutlet = lazy(() => import('./components/website/NewsOutlet'));
-const About = lazy(() => import('./components/website/About'));
-const Contact = lazy(() => import('./components/website/Contact'));
+const StockOptions = lazy(() => import('./components/stocks/StockOptions'));
+
 const ColorModeContext = React.createContext({ toggleColorMode: () => {} });
 
 function LoadingFallback() {
@@ -82,6 +82,12 @@ function App() {
               <ErrorBoundary fallback={<Typography color="error">Error loading stock statistics</Typography>}>
                 <Suspense fallback={<LoadingFallback />}>
                   <StockStatistics ticker={ticker} />
+                </Suspense>
+              </ErrorBoundary>
+
+              <ErrorBoundary fallback={<Typography color="error">Error loading stock statistics</Typography>}>
+                <Suspense fallback={<LoadingFallback />}>
+                  <StockOptions ticker={ticker} />
                 </Suspense>
               </ErrorBoundary>
             </Box>
