@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { Box, TextField, Button, Typography, Select, MenuItem } from '@mui/material';
+import { Box, TextField, Button, Typography, Select, MenuItem, Card, CardContent, Divider, Grid } from '@mui/material';
 
-const InsiderPivot = () => {
+const CustomML = () => {
     const [symbol, setSymbol] = useState('');
     const [interval, setInterval] = useState('1mo');
     const [range, setRange] = useState('5y');
@@ -18,10 +18,33 @@ const InsiderPivot = () => {
         }
     };
 
+    const renderResults = () => {
+        if (!response || !response.untouchedPivots || response.untouchedPivots.length === 0) {
+            return <Typography>No untouched pivots found.</Typography>;
+        }
+
+        return response.untouchedPivots.map((pivot, index) => (
+            <Card key={index} sx={{ mb: 2, p: 2, boxShadow: 2 }}>
+                <CardContent>
+                    <Typography variant="h6" color="primary">
+                        {pivot.signal} Signal
+                    </Typography>
+                    <Divider sx={{ my: 1 }} />
+                    <Typography variant="body1">
+                        Timestamp: {new Date(pivot.timestamp * 1000).toLocaleString()}
+                    </Typography>
+                    <Typography variant="body2" color="textSecondary">
+                        {pivot.signal === 'Buy' ? 'Pending Buy Opportunity' : 'Pending Sell Opportunity'}
+                    </Typography>
+                </CardContent>
+            </Card>
+        ));
+    };
+
     return (
         <Box sx={{ mt: 4 }}>
             <Typography variant="h5" gutterBottom>
-                Insider Pivot Points
+                Custom ML Pivots
             </Typography>
             <Box sx={{ display: 'flex', gap: 2, mb: 2 }}>
                 <TextField
@@ -29,18 +52,19 @@ const InsiderPivot = () => {
                     value={symbol}
                     onChange={(e) => setSymbol(e.target.value)}
                     variant="outlined"
+                    sx={{ flex: 1 }}
                 />
-                <Select value={interval} onChange={(e) => setInterval(e.target.value)}>
+                <Select value={interval} onChange={(e) => setInterval(e.target.value)} sx={{ minWidth: 120 }}>
                     {['1m', '2m', '5m', '15m', '30m', '60m', '1d', '1wk', '1mo'].map((int) => (
                         <MenuItem key={int} value={int}>{int}</MenuItem>
                     ))}
                 </Select>
-                <Select value={range} onChange={(e) => setRange(e.target.value)}>
+                <Select value={range} onChange={(e) => setRange(e.target.value)} sx={{ minWidth: 120 }}>
                     {['1d', '5d', '1mo', '3mo', '6mo', '1y', '2y', '5y', '10y', 'ytd', 'max'].map((rng) => (
                         <MenuItem key={rng} value={rng}>{rng}</MenuItem>
                     ))}
                 </Select>
-                <Select value={region} onChange={(e) => setRegion(e.target.value)}>
+                <Select value={region} onChange={(e) => setRegion(e.target.value)} sx={{ minWidth: 120 }}>
                     {['US', 'BR', 'AU', 'CA', 'FR', 'DE', 'HK', 'IN', 'IT', 'ES', 'GB', 'SG'].map((reg) => (
                         <MenuItem key={reg} value={reg}>{reg}</MenuItem>
                     ))}
@@ -52,12 +76,18 @@ const InsiderPivot = () => {
 
             {response && (
                 <Box sx={{ mt: 4 }}>
-                    <Typography variant="h6">Results:</Typography>
-                    <pre>{JSON.stringify(response, null, 2)}</pre>
+                    <Typography variant="h6" gutterBottom>
+                        Untouched Pivots
+                    </Typography>
+                    <Grid container spacing={2}>
+                        <Grid item xs={12}>
+                            {renderResults()}
+                        </Grid>
+                    </Grid>
                 </Box>
             )}
         </Box>
     );
 };
 
-export default InsiderPivot;
+export default CustomML;
