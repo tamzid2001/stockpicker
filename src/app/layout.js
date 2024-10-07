@@ -23,14 +23,14 @@ export const metadata = {
     description: "Comprehensive stock market analysis and insights for investors. Explore real-time data, earnings reports, and trading tools.",
     type: "website",
     url: "https://yourwebsite.com",
-    image: "https://yourwebsite.com/og-image.jpg", // Replace with your OG image URL
+    image: "./web-app-manifest-512x512.png", // Replace with your OG image URL
   },
   twitter: {
     card: "summary_large_image",
     site: "@yourtwitterhandle",
     title: "Stock Analysis Pro - Real-Time Stock Insights",
     description: "Stay ahead in the stock market with our analysis and real-time data tools.",
-    image: "https://yourwebsite.com/twitter-image.jpg", // Replace with your Twitter image URL
+    image: "./web-app-manifest-512x512.png", // Replace with your Twitter image URL
   },
 };
 
