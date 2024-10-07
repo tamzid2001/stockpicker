@@ -7,8 +7,8 @@ import FeatureCards from '../homepage/FeatureCards';
 import VideoSection from '../homepage/VideoSection';
 import WaitingList from '../homepage/WaitingList';
 import UserReviews from '../homepage/UserReviews';
-const About = lazy(() => import('./components/website/About'));
-const Contact = lazy(() => import('./components/website/Contact'));
+const About = lazy(() => import('../website/About'));
+const Contact = lazy(() => import('../website/Contact'));
 function LoadingFallback() {
   return <CircularProgress />;
 }
