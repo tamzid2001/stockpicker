@@ -1,5 +1,3 @@
-// components/AIChat.js
-
 import React, { useState } from 'react';
 import { 
   Fab, Dialog, DialogTitle, DialogContent, DialogActions, 
@@ -37,15 +35,19 @@ const AIChat = ({ stockData }) => {
         const { done, value } = await reader.read();
         if (done) break;
         aiResponse += decoder.decode(value);
-        setChatMessages(prev => {
-          const newMessages = [...prev];
-          newMessages[newMessages.length - 1] = { role: 'assistant', content: aiResponse };
-          return newMessages;
-        });
       }
+
+      // Add the AI response as a separate message
+      setChatMessages(prev => [
+        ...prev,
+        { role: 'assistant', content: aiResponse }
+      ]);
     } catch (error) {
       console.error('Error in AI chat:', error);
-      setChatMessages(prev => [...prev, { role: 'assistant', content: 'Sorry, I encountered an error. Please try again.' }]);
+      setChatMessages(prev => [
+        ...prev,
+        { role: 'assistant', content: 'Sorry, I encountered an error. Please try again.' }
+      ]);
     }
   };
 

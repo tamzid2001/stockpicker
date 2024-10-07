@@ -1,5 +1,3 @@
-// GlobalContext.js
-
 import React, { createContext, useContext, useState } from 'react';
 
 // Create Contexts for Region and Language

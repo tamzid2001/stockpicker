@@ -1,14 +1,11 @@
-// components/AnalystReports.js
-
 import React, { useState, useEffect } from 'react';
 import { Paper, Typography, Box, CircularProgress, Grid, Button, Container } from '@mui/material';
-import { useTicker } from '../contexts/TickerContext'; // Import the ticker context
-import { useRegion, useLanguage } from '../contexts/GlobalContext'; // Import global contexts for region and language
+import { useTicker } from '../contexts/TickerContext';
+import { useGlobalContext } from '../contexts/GlobalContext';
 
 const AnalystReports = () => {
-    const { ticker } = useTicker(); // Get the ticker from global context
-    const region = useRegion(); // Correctly access the region context
-    const language = useLanguage(); // Correctly access the language context
+    const { ticker } = useTicker(); 
+    const { selectedRegion, selectedLanguage } = useGlobalContext(); // Access region and language from global context
     const [reports, setReports] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -24,7 +21,7 @@ const AnalystReports = () => {
             setError(null);
 
             try {
-                const response = await fetch(`/api/analyst?ticker=${ticker}&region=${region}&lang=${language}`);
+                const response = await fetch(`/api/analyst?ticker=${ticker}&region=${selectedRegion}&lang=${selectedLanguage}`);
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
@@ -44,7 +41,7 @@ const AnalystReports = () => {
         };
 
         fetchReports();
-    }, [ticker, region, language]);
+    }, [ticker, selectedRegion, selectedLanguage]);
 
     if (loading) return <CircularProgress />;
     if (error) return <Typography color="error">{error}</Typography>;
@@ -64,12 +61,7 @@ const AnalystReports = () => {
                         <Grid item xs={12} key={index}>
                             <Paper elevation={2} sx={{ p: 3, display: 'flex', alignItems: 'center' }}>
                                 <Box sx={{ flexShrink: 0, mr: 2 }}>
-                                    <img
-                                        src={report.snapshot_url}
-                                        alt={report.report_title}
-                                        width="100"
-                                        onError={(e) => e.target.style.display = 'none'}
-                                    />
+                                    <img src={report.snapshot_url} alt={report.report_title} width="100" />
                                 </Box>
                                 <Box sx={{ flexGrow: 1 }}>
                                     <Typography variant="h6">{report.report_title}</Typography>
