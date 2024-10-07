@@ -1,15 +1,18 @@
 import React from 'react';
-import { AppBar, Toolbar, Typography, IconButton, Button, Box, Select, MenuItem } from '@mui/material';
+import { AppBar, Toolbar, Typography, IconButton, Button, Box, Select, MenuItem, useMediaQuery } from '@mui/material';
 import { Brightness4, Brightness7 } from '@mui/icons-material';
 import { UserButton, SignedIn, SignedOut, SignInButton, useUser } from "@clerk/nextjs";
 import { useGlobalContext } from '../contexts/GlobalContext';
+import { useTheme } from '@mui/material/styles';
 
 const regions = ['US', 'BR', 'AU', 'CA', 'FR', 'DE', 'HK', 'IN', 'IT', 'ES', 'GB', 'SG'];
 const languages = ['en-US', 'pt-BR', 'en-AU', 'en-CA', 'fr-FR', 'de-DE', 'zh-Hant-HK', 'en-IN', 'it-IT', 'es-ES', 'en-GB', 'en-SG'];
 
 const Header = ({ colorMode, theme }) => {
   const { selectedRegion, setSelectedRegion, selectedLanguage, setSelectedLanguage } = useGlobalContext();
-  const { isLoaded, isSignedIn } = useUser(); // Get user state
+  const { isLoaded, isSignedIn } = useUser();
+  const muiTheme = useTheme();
+  const isMobile = useMediaQuery(muiTheme.breakpoints.down('sm'));
 
   const handleRegionChange = (event) => {
     setSelectedRegion(event.target.value);
@@ -23,88 +26,118 @@ const Header = ({ colorMode, theme }) => {
   const stripeSubscriptionUrl = 'https://stripe.com/premium-subscription-url';
 
   return (
-    <AppBar position="static" color="primary" elevation={3}>
-      <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
-        {/* Left Section: Logo and Title */}
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <Typography variant="h6" component="div" sx={{ mr: 2, fontWeight: 'bold' }}>
-            Stock Analysis Pro
-          </Typography>
-        </Box>
+    <>
+      {/* TradingView Widget */}
+      <Box sx={{ width: '100%', backgroundColor: 'white', py: 1 }}>
+        <div className="tradingview-widget-container" style={{ overflow: 'hidden' }}>
+          <div className="tradingview-widget-container__widget"></div>
+          <div className="tradingview-widget-copyright">
+            <a href="https://www.tradingview.com/" rel="noopener nofollow" target="_blank">
+              <span style={{ color: '#2962ff' }}>Track all markets on TradingView</span>
+            </a>
+          </div>
+          <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
+            {
+              "symbols": [
+                { "proName": "FOREXCOM:SPXUSD", "title": "S&P 500 Index" },
+                { "proName": "FOREXCOM:NSXUSD", "title": "US 100 Cash CFD" },
+                { "proName": "FX_IDC:EURUSD", "title": "EUR to USD" },
+                { "proName": "BITSTAMP:BTCUSD", "title": "Bitcoin" },
+                { "proName": "BITSTAMP:ETHUSD", "title": "Ethereum" }
+              ],
+              "showSymbolLogo": true,
+              "isTransparent": false,
+              "displayMode": "adaptive",
+              "colorTheme": "light",
+              "locale": "en"
+            }
+          </script>
+        </div>
+      </Box>
 
-        {/* Right Section: Theme Switch, Region, Language, and Sign In/Sign Out */}
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          {/* Theme Switch */}
-          <IconButton onClick={colorMode.toggleColorMode} color="inherit" sx={{ mr: 2 }}>
-            {theme.palette.mode === 'dark' ? <Brightness7 /> : <Brightness4 />}
-          </IconButton>
+      <AppBar position="static" color="primary" elevation={3} sx={{ width: '100%', boxShadow: 4 }}>
+        <Toolbar sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between' }}>
+          {/* Left Section: Logo and Title */}
+          <Box sx={{ display: 'flex', alignItems: 'center', mb: isMobile ? 1 : 0 }}>
+            <Typography variant="h6" component="div" sx={{ fontWeight: 'bold' }}>
+              Stock Analysis Pro
+            </Typography>
+          </Box>
 
-          {/* Region Select */}
-          <Select
-            value={selectedRegion}
-            onChange={handleRegionChange}
-            variant="outlined"
-            sx={{ mr: 2, minWidth: 100, color: 'white', borderColor: 'white' }}
-          >
-            {regions.map((region) => (
-              <MenuItem key={region} value={region}>
-                {region}
-              </MenuItem>
-            ))}
-          </Select>
+          {/* Right Section: Theme Switch, Region, Language, and Sign In/Sign Out */}
+          <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
+            {/* Theme Switch */}
+            <IconButton onClick={colorMode.toggleColorMode} color="inherit" sx={{ mr: 1 }}>
+              {theme.palette.mode === 'dark' ? <Brightness7 /> : <Brightness4 />}
+            </IconButton>
 
-          {/* Language Select */}
-          <Select
-            value={selectedLanguage}
-            onChange={handleLanguageChange}
-            variant="outlined"
-            sx={{ mr: 2, minWidth: 120, color: 'white', borderColor: 'white' }}
-          >
-            {languages.map((language) => (
-              <MenuItem key={language} value={language}>
-                {language}
-              </MenuItem>
-            ))}
-          </Select>
-
-          {/* Premium Subscription Button */}
-          <SignedIn>
-            <Button
-              variant="contained"
-              color="secondary"
-              sx={{ borderRadius: '20px', ml: 2 }}
-              onClick={() => window.location.href = stripeSubscriptionUrl}
-            >
-              Get Premium
-            </Button>
-          </SignedIn>
-          <SignedOut>
-            <Button
-              variant="contained"
-              color="secondary"
-              sx={{ borderRadius: '20px', ml: 2 }}
-              // onClick={() => window.location.href = '/sign-in'}
-            >
-              Get Premium
-            </Button>
-          </SignedOut>
-
-          {/* Sign In/Sign Out */}
-          <SignedOut>
-            <Button
+            {/* Region Select */}
+            <Select
+              value={selectedRegion}
+              onChange={handleRegionChange}
               variant="outlined"
-              color="inherit"
-              sx={{ borderRadius: '20px', ml: 2 }}
+              sx={{ mr: 1, minWidth: 80, color: 'white', borderColor: 'white' }}
             >
-              <SignInButton />
-            </Button>
-          </SignedOut>
-          <SignedIn>
-            <UserButton afterSignOutUrl="/" />
-          </SignedIn>
-        </Box>
-      </Toolbar>
-    </AppBar>
+              {regions.map((region) => (
+                <MenuItem key={region} value={region}>
+                  {region}
+                </MenuItem>
+              ))}
+            </Select>
+
+            {/* Language Select */}
+            <Select
+              value={selectedLanguage}
+              onChange={handleLanguageChange}
+              variant="outlined"
+              sx={{ mr: 1, minWidth: 100, color: 'white', borderColor: 'white' }}
+            >
+              {languages.map((language) => (
+                <MenuItem key={language} value={language}>
+                  {language}
+                </MenuItem>
+              ))}
+            </Select>
+
+            {/* Premium Subscription Button */}
+            <SignedIn>
+              <Button
+                variant="contained"
+                color="secondary"
+                sx={{ borderRadius: '20px', ml: 1, mb: isMobile ? 1 : 0 }}
+                onClick={() => window.location.href = stripeSubscriptionUrl}
+              >
+                Get Premium
+              </Button>
+            </SignedIn>
+            <SignedOut>
+              <Button
+                variant="contained"
+                color="secondary"
+                sx={{ borderRadius: '20px', ml: 1, mb: isMobile ? 1 : 0 }}
+                onClick={() => window.location.href = '/sign-in'}
+              >
+                Get Premium
+              </Button>
+            </SignedOut>
+
+            {/* Sign In/Sign Out */}
+            <SignedOut>
+              <Button
+                variant="outlined"
+                color="inherit"
+                sx={{ borderRadius: '20px', ml: 1, mb: isMobile ? 1 : 0 }}
+              >
+                <SignInButton />
+              </Button>
+            </SignedOut>
+            <SignedIn>
+              <UserButton afterSignOutUrl="/" />
+            </SignedIn>
+          </Box>
+        </Toolbar>
+      </AppBar>
+    </>
   );
 };
 
