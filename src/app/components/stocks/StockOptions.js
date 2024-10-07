@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Paper, Typography, Grid, CircularProgress, Box, Button } from '@mui/material';
-import { useTicker } from './TickerContext'; // Import useTicker from the TickerContext
+import { useTicker } from '../contexts/TickerContext'; // Import useTicker from the TickerContext
 
 const StockOptions = () => {
   const { ticker } = useTicker(); // Access the global ticker from context

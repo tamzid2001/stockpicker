@@ -1,7 +1,7 @@
 // components/stocks/EarningsInfo.js
 import React, { useState, useEffect } from 'react';
 import { Paper, Typography, Box, CircularProgress } from '@mui/material';
-import { useTicker } from './TickerContext'; // Import useTicker from the TickerContext
+import { useTicker } from '../contexts/TickerContext'; // Import useTicker from the TickerContext
 
 const EarningsInfo = () => {
   const { ticker } = useTicker(); // Access the global ticker value

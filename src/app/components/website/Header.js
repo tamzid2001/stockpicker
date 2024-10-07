@@ -2,7 +2,7 @@ import React from 'react';
 import { AppBar, Toolbar, Typography, IconButton, Button, Box, Select, MenuItem } from '@mui/material';
 import { Brightness4, Brightness7 } from '@mui/icons-material';
 import { UserButton, SignedIn, SignedOut, SignInButton } from "@clerk/nextjs";
-import { useGlobalContext } from '../stocks/GlobalContext';
+import { useGlobalContext } from '../contexts/GlobalContext';
 
 const regions = ['US', 'BR', 'AU', 'CA', 'FR', 'DE', 'HK', 'IN', 'IT', 'ES', 'GB', 'SG'];
 const languages = ['en-US', 'pt-BR', 'en-AU', 'en-CA', 'fr-FR', 'de-DE', 'zh-Hant-HK', 'en-IN', 'it-IT', 'es-ES', 'en-GB', 'en-SG'];

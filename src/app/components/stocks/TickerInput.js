@@ -1,7 +1,7 @@
 // components/stocks/TickerInput.js
 import React from 'react';
 import { TextField, Box, Chip } from '@mui/material';
-import { useTicker } from './TickerContext';
+import { useTicker } from '../contexts/TickerContext';
 
 const suggestedTickers = ['AAPL', 'GOOGL', 'MSFT', 'AMZN', 'FB', 'TSLA', 'NVDA', 'JPM', 'V', 'JNJ'];
 

@@ -5,8 +5,8 @@ import { ClerkProvider, SignedIn, SignedOut } from "@clerk/nextjs";
 import { ThemeProvider, createTheme, useTheme } from '@mui/material/styles';
 import { CssBaseline, Container, Box, Typography, CircularProgress } from '@mui/material';
 import ErrorBoundary from './components/website/ErrorBoundary';
-import { TickerProvider, useTicker } from './components/stocks/TickerContext'; // Import the TickerProvider and useTicker
-import { GlobalProvider } from './components/stocks/GlobalContext';
+import { TickerProvider, useTicker } from './components/contexts/TickerContext'; // Import the TickerProvider and useTicker
+import { GlobalProvider } from './components/contexts/GlobalContext';
 
 import Header from './components/website/Header';
 import StockAnalysis from './components/stocks/StockAnalysis';
@@ -19,6 +19,7 @@ import Homepage from './components/website/Homepage';
 import NewsOutlet from './components/website/NewsOutlet';
 import StockOptions from './components/stocks/StockOptions';
 import StockScreener from './components/stocks/Screeners';
+import Analyst from './components/stocks/Analyst'
 
 
 const ColorModeContext = React.createContext({ toggleColorMode: () => {} });
@@ -90,6 +91,12 @@ function App() {
               <ErrorBoundary fallback={<Typography color="error">Error loading stock statistics</Typography>}>
                 <Suspense fallback={<LoadingFallback />}>
                   <StockStatistics ticker={ticker} />
+                </Suspense>
+              </ErrorBoundary>
+
+              <ErrorBoundary fallback={<Typography color="error">Error loading analyst info</Typography>}>
+                <Suspense fallback={<LoadingFallback />}>
+                  <Analyst ticker={ticker} />
                 </Suspense>
               </ErrorBoundary>
 

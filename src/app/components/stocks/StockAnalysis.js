@@ -23,7 +23,7 @@ ChartJS.register(
   Legend
 );
 
-import { useTicker } from './TickerContext';
+import { useTicker } from '../contexts/TickerContext';
 import TickerInput from './TickerInput'; // Import the new component
 
 const StockAnalysis = ({ theme }) => {
