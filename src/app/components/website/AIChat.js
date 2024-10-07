@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { 
   Fab, Dialog, DialogTitle, DialogContent, DialogActions, 
-  Button, TextField, List, ListItem, ListItemText, Box, Avatar, Typography 
+  Button, TextField, List, ListItem, Box, Avatar, Typography, IconButton
 } from '@mui/material';
 import { Chat, ThumbUp, ThumbDown, Person, SmartToy } from '@mui/icons-material';
 
