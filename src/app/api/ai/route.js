@@ -3,7 +3,6 @@ import OpenAI from 'openai';
 import formidable from 'formidable';
 import fs from 'fs';
 import { promisify } from 'util';
-import fs from 'fs';
 import speech from '@google-cloud/speech';
 
 // Configure the Google Cloud Speech client
