@@ -8,6 +8,7 @@
   --background-dark: #0a0a0a;
   --foreground-dark: #ededed;
   --primary-color: #1976d2;
+  --primary-color-dark: #1565c0; /* Darker shade for hover */
   --secondary-color: #dc004e;
   --accent-color: #90caf9;
   --font-main: 'Inter', sans-serif;
@@ -47,43 +48,51 @@ h1, h2, h3, h4, h5, h6 {
   @apply mx-auto px-4 sm:px-6 lg:px-8;
 }
 
-.btn-primary {
-  @apply bg-primary-color text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out;
-}
+@layer components {
+  .btn-primary {
+    background-color: var(--primary-color);
+    color: white;
+    @apply font-bold py-2 px-4 rounded transition duration-300 ease-in-out;
+  }
 
-.btn-primary:hover {
-  @apply bg-primary-color-dark;
-}
+  .btn-primary:hover {
+    background-color: var(--primary-color-dark);
+  }
 
-.card {
-  @apply shadow-lg rounded-lg overflow-hidden bg-white dark:bg-gray-800;
-}
+  .card {
+    @apply shadow-lg rounded-lg overflow-hidden bg-white dark:bg-gray-800;
+  }
 
-.card-body {
-  @apply p-6;
-}
+  .card-body {
+    @apply p-6;
+  }
 
-.text-center {
-  @apply text-center;
-}
+  .text-center {
+    @apply text-center;
+  }
 
-.text-muted {
-  @apply text-gray-500 dark:text-gray-400;
+  .text-muted {
+    @apply text-gray-500 dark:text-gray-400;
+  }
 }
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
   }
+  
   .shadow-xl {
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
   }
+
   .transition-all {
     transition: all 0.3s ease-in-out;
   }
+
   .hover-scale:hover {
     transform: scale(1.05);
   }
+
   .gradient-bg {
     background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
   }
