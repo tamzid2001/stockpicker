@@ -4,7 +4,13 @@ import React, { useState, useEffect } from 'react';
 import { Paper, Typography, CircularProgress, Box, Grid } from '@mui/material';
 import { useTicker } from '../contexts/TickerContext';
 import { useGlobalContext } from '../contexts/GlobalContext';
-
+const SymbolOverviewNoSSR = dynamic(
+    () => import("react-ts-tradingview-widgets").then((w) => w.SymbolOverview),
+    {
+      ssr: false,
+    }
+  );
+import { TechnicalAnalysis } from "react-ts-tradingview-widgets";
 const RecommendationTrend = () => {
     const { ticker } = useTicker();
     const { selectedRegion, selectedLanguage } = useGlobalContext();
@@ -42,7 +48,7 @@ const RecommendationTrend = () => {
             }
         };
 
-        fetchTrendData();
+        //fetchTrendData();
     }, [ticker, selectedRegion, selectedLanguage]);
 
     if (loading) return <CircularProgress />;
@@ -55,20 +61,7 @@ const RecommendationTrend = () => {
                 <Typography variant="h5" gutterBottom align="center">
                     Recommendation Trends for {ticker}
                 </Typography>
-                <Grid container spacing={2}>
-                    {trendData.map((trend, index) => (
-                        <Grid item xs={12} sm={6} key={index}>
-                            <Paper elevation={1} sx={{ p: 2 }}>
-                                <Typography variant="body1"><strong>Period:</strong> {trend.period}</Typography>
-                                <Typography variant="body2">Strong Buy: {trend.strongBuy}</Typography>
-                                <Typography variant="body2">Buy: {trend.buy}</Typography>
-                                <Typography variant="body2">Hold: {trend.hold}</Typography>
-                                <Typography variant="body2">Sell: {trend.sell}</Typography>
-                                <Typography variant="body2">Strong Sell: {trend.strongSell}</Typography>
-                            </Paper>
-                        </Grid>
-                    ))}
-                </Grid>
+                <TechnicalAnalysis colorTheme="light" width="100%" symbol={ticker}></TechnicalAnalysis>
             </Paper>
         </Box>
     );

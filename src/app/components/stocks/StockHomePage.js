@@ -16,6 +16,13 @@ import CustomML from './CustomML';
 import Ertimur from './Ertimur';
 import { useGlobalContext } from '../contexts/GlobalContext';
 import { useTicker } from '../contexts/TickerContext';
+const SymbolOverviewNoSSR = dynamic(
+  () => import("react-ts-tradingview-widgets").then((w) => w.SymbolOverview),
+  {
+    ssr: false,
+  }
+);
+import { AdvancedRealTimeChart } from "react-ts-tradingview-widgets";
 
 const StockHomePage = () => {
   const [tabIndex, setTabIndex] = useState(0);
@@ -50,6 +57,7 @@ const StockHomePage = () => {
 
       {ticker && (
         <Paper elevation={3} sx={{ p: 2, mt: 2, boxShadow: 4 }}>
+        <AdvancedRealTimeChart theme="light" autosize symbol={ticker}></AdvancedRealTimeChart>
           <Tabs
             value={tabIndex}
             onChange={handleTabChange}

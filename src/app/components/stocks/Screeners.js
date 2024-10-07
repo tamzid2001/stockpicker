@@ -72,7 +72,7 @@ const Screeners = () => {
                 <Typography variant="h4" gutterBottom align="center">
                     Stock Screeners
                 </Typography>
-                <MarketData colorTheme="dark" width="100%" height={400}></MarketData>
+                <MarketData colorTheme="light" width="100%" height={400}></MarketData>
             </Paper>
         </Container>
     );

@@ -4,6 +4,15 @@ import React, { useState, useEffect } from 'react';
 import { Paper, Typography, CircularProgress, Box, Grid } from '@mui/material';
 import { useTicker } from '../contexts/TickerContext';
 import { useGlobalContext } from '../contexts/GlobalContext';
+const SymbolOverviewNoSSR = dynamic(
+    () => import("react-ts-tradingview-widgets").then((w) => w.SymbolOverview),
+    {
+      ssr: false,
+    }
+  );
+import { Timeline } from "react-ts-tradingview-widgets";
+
+<Timeline colorTheme="dark" feedMode="market" market="crypto" height={400} width="100%"></Timeline>
 
 const RecentUpdates = () => {
     const { ticker } = useTicker();
@@ -38,7 +47,7 @@ const RecentUpdates = () => {
             }
         };
 
-        fetchUpdateData();
+        //fetchUpdateData();
     }, [ticker, selectedRegion, selectedLanguage]);
 
     if (loading) return <CircularProgress />;
@@ -54,56 +63,7 @@ const RecentUpdates = () => {
                     Recent Updates for {ticker}
                 </Typography>
 
-                <Typography variant="h6" gutterBottom>Corporate Actions</Typography>
-                {corporateActions?.corporateActions?.length ? (
-                    corporateActions.corporateActions.map((action, index) => (
-                        <Typography key={index} variant="body2">
-                            {action.description}
-                        </Typography>
-                    ))
-                ) : (
-                    <Typography>No corporate actions available.</Typography>
-                )}
-
-                <Typography variant="h6" gutterBottom sx={{ mt: 3 }}>SEC Filings</Typography>
-                {secFilings?.filings?.length ? (
-                    secFilings.filings.map((filing, index) => (
-                        <Box key={index} sx={{ mb: 2 }}>
-                            <Typography variant="body2">
-                                <strong>{filing.type}</strong> - {filing.title} ({new Date(filing.epochDate * 1000).toLocaleDateString()})
-                            </Typography>
-                            <a href={filing.edgarUrl} target="_blank" rel="noopener noreferrer">
-                                View Filing
-                            </a>
-                        </Box>
-                    ))
-                ) : (
-                    <Typography>No SEC filings available.</Typography>
-                )}
-
-                <Typography variant="h6" gutterBottom sx={{ mt: 3 }}>Event Calendar</Typography>
-                {calendarEvents?.earnings?.earningsDate?.length ? (
-                    calendarEvents.earnings.earningsDate.map((event, index) => (
-                        <Typography key={index} variant="body2">
-                            Earnings Date: {new Date(event.raw * 1000).toLocaleDateString()}
-                        </Typography>
-                    ))
-                ) : (
-                    <Typography>No upcoming events available.</Typography>
-                )}
-
-                <Typography variant="h6" gutterBottom sx={{ mt: 3 }}>Upgrade/Downgrade History</Typography>
-                {upgradeDowngradeHistory?.history?.length ? (
-                    upgradeDowngradeHistory.history.map((upgrade, index) => (
-                        <Box key={index} sx={{ mb: 2 }}>
-                            <Typography variant="body2">
-                                {upgrade.firm} upgraded to {upgrade.toGrade} from {upgrade.fromGrade} on {new Date(upgrade.epochGradeDate * 1000).toLocaleDateString()}
-                            </Typography>
-                        </Box>
-                    ))
-                ) : (
-                    <Typography>No upgrade/downgrade history available.</Typography>
-                )}
+                <Timeline colorTheme="light" feedMode="symbol" symbol={ticker} height={400} width="100%"></Timeline>
             </Paper>
         </Box>
     );
