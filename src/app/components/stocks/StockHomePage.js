@@ -11,6 +11,7 @@ import RecentUpdates from './RecentUpdates';
 import Analyst from './Analyst';
 import StockOptions from './StockOptions';
 import StockScreener from './Screeners';
+import Insiders from './Insider'; // Importing the new Insiders component
 import { useGlobalContext } from '../contexts/GlobalContext';
 import { useTicker } from '../contexts/TickerContext';
 
@@ -50,6 +51,7 @@ const StockHomePage = () => {
           <Tab label="Recent Updates" />
           <Tab label="Analyst Reports" />
           <Tab label="Stock Options" />
+          <Tab label="Insider Transactions" /> {/* New Insiders tab */}
         </Tabs>
         <Box sx={{ p: 3 }}>
           {tabIndex === 0 && (
@@ -112,6 +114,13 @@ const StockHomePage = () => {
             <ErrorBoundary fallback={<Typography color="error">Error loading stock options</Typography>}>
               <Suspense fallback={<LoadingFallback />}>
                 <StockOptions ticker={ticker} />
+              </Suspense>
+            </ErrorBoundary>
+          )}
+          {tabIndex === 9 && (
+            <ErrorBoundary fallback={<Typography color="error">Error loading insider transactions</Typography>}>
+              <Suspense fallback={<LoadingFallback />}>
+                <Insiders ticker={ticker} region={selectedRegion} /> {/* Passing ticker and region */}
               </Suspense>
             </ErrorBoundary>
           )}
