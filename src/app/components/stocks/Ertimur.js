@@ -44,7 +44,7 @@ const Ertimur = () => {
     return (
         <Box sx={{ mt: 4 }}>
             <Typography variant="h5" gutterBottom>
-                Earnings Analysis - Ertimur
+                Earnings Analysis - Ertimur (beta)
             </Typography>
             <Button variant="contained" color="primary" onClick={fetchEarningsData}>
                 Fetch Earnings Data

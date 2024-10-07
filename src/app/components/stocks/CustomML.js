@@ -45,7 +45,7 @@ const CustomML = () => {
     return (
         <Box sx={{ mt: 4 }}>
             <Typography variant="h5" gutterBottom>
-                Custom ML Pivots
+                Custom ML (beta)
             </Typography>
             <Box sx={{ display: 'flex', gap: 2, mb: 2 }}>
                 <TextField
