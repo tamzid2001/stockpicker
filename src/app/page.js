@@ -18,8 +18,9 @@ import Footer from './components/website/Footer';
 import Homepage from './components/website/Homepage';
 import NewsOutlet from './components/website/NewsOutlet';
 import StockOptions from './components/stocks/StockOptions';
-import StockScreener from './components/stocks/Screeners';
+//import StockScreener from './components/stocks/Screeners';
 import Analyst from './components/stocks/Analyst'
+import Recommendation from './components/stocks/Recommendation';
 
 
 const ColorModeContext = React.createContext({ toggleColorMode: () => {} });
@@ -91,6 +92,12 @@ function App() {
               <ErrorBoundary fallback={<Typography color="error">Error loading stock statistics</Typography>}>
                 <Suspense fallback={<LoadingFallback />}>
                   <StockStatistics ticker={ticker} />
+                </Suspense>
+              </ErrorBoundary>
+
+              <ErrorBoundary fallback={<Typography color="error">Error loading stock statistics</Typography>}>
+                <Suspense fallback={<LoadingFallback />}>
+                  <Recommendation ticker={ticker} />
                 </Suspense>
               </ErrorBoundary>
 
