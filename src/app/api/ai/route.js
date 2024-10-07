@@ -2,46 +2,18 @@ import { NextResponse } from 'next/server';
 import OpenAI from 'openai';
 import formidable from 'formidable';
 import fs from 'fs';
-import { promisify } from 'util';
-import speech from '@google-cloud/speech';
 
-// Configure the Google Cloud Speech client
-const client = new speech.SpeechClient();
-
-async function speechToText(filePath) {
-    try {
-        const file = fs.readFileSync(filePath);
-        const audioBytes = file.toString('base64');
-
-        const request = {
-            audio: {
-                content: audioBytes,
-            },
-            config: {
-                encoding: 'LINEAR16', // Or whatever encoding matches your file
-                sampleRateHertz: 16000,
-                languageCode: 'en-US',
-            },
-        };
-
-        const [response] = await client.recognize(request);
-        const transcription = response.results
-            .map(result => result.alternatives[0].transcript)
-            .join('\n');
-        return transcription;
-    } catch (error) {
-        console.error('Error transcribing speech:', error);
-        return null;
-    }
-}
+const openai = new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY,
+});
 
 const systemPrompt = `
-You are a stock analysis assistant that helps users interpret stock data and market trends.
-For every user question, analyze the provided stock data and market information.
-Provide insights and explanations based on the data to answer the user's questions.
+You are a highly advanced stock analysis assistant with expertise in financial markets, data interpretation, and quantitative analysis. Your primary role is to assist users in making informed investment decisions by interpreting stock data and market trends comprehensively. 
+
+For each user query, utilize any available stock data, historical performance metrics, and market indicators to provide detailed and accurate insights. Ensure that your responses incorporate financial theories, data-driven analysis, and relevant market contexts. If specific stock data is not available, offer evidence-based general advice, and guide users on how to optimize their investment strategies through further data collection or analysis.
 `;
 
-// Utility to parse form data including file uploads
+
 const parseFormData = (req) => {
     const form = new formidable.IncomingForm();
     form.uploadDir = './uploads';
@@ -67,39 +39,31 @@ export async function POST(req) {
         const lastMessage = data[data.length - 1];
         let lastMessageContent = lastMessage.content;
 
-        // Handle file attachments if available
+        // If an audio file is uploaded, transcribe it using Whisper
         if (files.file) {
             const filePath = files.file.filepath;
             const fileType = files.file.mimetype;
 
             if (fileType.startsWith('audio/')) {
-                // Convert audio file to text using the speechToText utility
-                const transcription = await speechToText(filePath);
+                const transcription = await transcribeAudio(filePath);
                 if (transcription) {
                     lastMessageContent += `\n\nVoice Input: ${transcription}`;
                 }
             } else {
-                // For other file types, log the file name
                 lastMessageContent += `\n\nUser uploaded a file: ${files.file.originalFilename}`;
             }
         }
 
-        // Append stock data to the message
-        lastMessageContent += "\n\nStock Data: " + JSON.stringify(lastMessage.stockData);
-        const messages = [
-            { role: 'system', content: systemPrompt },
-            ...data.slice(0, -1),
-            { role: 'user', content: lastMessageContent },
-        ];
-
-        // Generate response from OpenAI
         const completion = await openai.chat.completions.create({
-            messages: messages,
-            model: 'gpt-4',
+            messages: [
+                { role: 'system', content: systemPrompt },
+                ...data.slice(0, -1),
+                { role: 'user', content: lastMessageContent },
+            ],
+            model: 'gpt-4o-mini',
             stream: true,
         });
 
-        // Create a readable stream for the response
         const stream = new ReadableStream({
             async start(controller) {
                 const encoder = new TextEncoder();
@@ -107,7 +71,8 @@ export async function POST(req) {
                     for await (const chunk of completion) {
                         const content = chunk.choices[0]?.delta?.content;
                         if (content) {
-                            controller.enqueue(encoder.encode(content));
+                            const text = encoder.encode(content);
+                            controller.enqueue(text);
                         }
                     }
                 } catch (err) {
@@ -121,6 +86,22 @@ export async function POST(req) {
         return new NextResponse(stream);
     } catch (error) {
         console.error('Error processing request:', error);
-        return new NextResponse('Error processing request', { status: 500 });
+        return new NextResponse('Internal Server Error', { status: 500 });
+    }
+}
+
+// Function to transcribe audio using Whisper
+async function transcribeAudio(filePath) {
+    try {
+        const transcription = await openai.audio.transcriptions.create({
+            file: fs.createReadStream(filePath),
+            model: 'whisper-1',
+            response_format: 'text',
+        });
+
+        return transcription.text;
+    } catch (error) {
+        console.error('Error transcribing audio:', error);
+        return null;
     }
 }
