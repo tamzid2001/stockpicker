@@ -16,7 +16,7 @@ const StockOptions = () => {
       setLoading(true);
       setError(null);
       try {
-        const response = await fetch(`/api/stock-options?symbol=${ticker}`);
+        const response = await fetch(`/api/options?symbol=${ticker}`);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -82,7 +82,7 @@ const StockOptions = () => {
               </Typography>
               {option.straddles.map((straddle, idx) => (
                 <Paper key={idx} elevation={1} sx={{ p: 2, mt: 2 }}>
-                  <Typography variant="body1"><strong>Strike Price:</strong> ${straddle.strike || 'N/A'}</Typography>
+                  <Typography variant="body1"><strong>Strike Price:</strong> ${straddle?.strike || 'N/A'}</Typography>
                   <Grid container spacing={2}>
                     <Grid item xs={6}>
                       <Typography variant="body2"><strong>Call Contract</strong></Typography>
