@@ -2,12 +2,13 @@
 import React, { Suspense } from 'react';
 import { Box, Typography, CircularProgress } from "@mui/material";
 import ErrorBoundary from './ErrorBoundary';
-import HeroSection from './homepage/HeroSection';
-import FeatureCards from './homepage/FeatureCards';
-import VideoSection from './homepage/VideoSection';
-import WaitingList from './homepage/WaitingList';
-import UserReviews from './homepage/UserReviews';
-
+import HeroSection from '../homepage/HeroSection';
+import FeatureCards from '../homepage/FeatureCards';
+import VideoSection from '../homepage/VideoSection';
+import WaitingList from '../homepage/WaitingList';
+import UserReviews from '../homepage/UserReviews';
+const About = lazy(() => import('./components/website/About'));
+const Contact = lazy(() => import('./components/website/Contact'));
 function LoadingFallback() {
   return <CircularProgress />;
 }
@@ -17,6 +18,18 @@ const Homepage = () => (
     <ErrorBoundary fallback={<Typography color="error">Error loading hero section</Typography>}>
       <Suspense fallback={<LoadingFallback />}>
         <HeroSection />
+      </Suspense>
+    </ErrorBoundary>
+
+    <ErrorBoundary fallback={<Typography color="error">Error loading hero section</Typography>}>
+      <Suspense fallback={<LoadingFallback />}>
+        <About />
+      </Suspense>
+    </ErrorBoundary>
+
+    <ErrorBoundary fallback={<Typography color="error">Error loading hero section</Typography>}>
+      <Suspense fallback={<LoadingFallback />}>
+        <Contact />
       </Suspense>
     </ErrorBoundary>
 

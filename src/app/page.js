@@ -4,20 +4,21 @@ import React, { Suspense, lazy, useContext, useState } from 'react';
 import { ClerkProvider, SignedIn, SignedOut } from "@clerk/nextjs";
 import { ThemeProvider, createTheme, useTheme } from '@mui/material/styles';
 import { CssBaseline, Container, Box, Typography, CircularProgress } from '@mui/material';
-import ErrorBoundary from './components/ErrorBoundary';
+import ErrorBoundary from './components/website/ErrorBoundary';
 import { TickerProvider, useTicker } from './components/stocks/TickerContext'; // Import the TickerProvider and useTicker
 
 // Lazy load components
-const Header = lazy(() => import('./components/Header'));
+const Header = lazy(() => import('./components/website/Header'));
 const StockAnalysis = lazy(() => import('./components/stocks/StockAnalysis'));
 const EarningsInfo = lazy(() => import('./components/stocks/EarningsInfo'));
 const StockFundamentals = lazy(() => import('./components/stocks/StockFundamentals'));
 import StockStatistics from './components/stocks/Statistics';
-const AIChat = lazy(() => import('./components/AIChat'));
-const Footer = lazy(() => import('./components/Footer'));
-const Homepage = lazy(() => import('./components/Homepage'));
-const NewsOutlet = lazy(() => import('./components/NewsOutlet'));
-
+const AIChat = lazy(() => import('./components/website/AIChat'));
+const Footer = lazy(() => import('./components/website/Footer'));
+const Homepage = lazy(() => import('./components/website/Homepage'));
+const NewsOutlet = lazy(() => import('./components/website/NewsOutlet'));
+const About = lazy(() => import('./components/website/About'));
+const Contact = lazy(() => import('./components/website/Contact'));
 const ColorModeContext = React.createContext({ toggleColorMode: () => {} });
 
 function LoadingFallback() {
