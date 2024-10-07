@@ -43,6 +43,14 @@ const StockOptions = () => {
 
   const { quote, expirationDates, options } = optionsData;
 
+  const getTopOptionsByVolume = (straddles, type) => {
+    return straddles
+      .map((straddle) => straddle[type])
+      .filter((option) => option) // Ensure the option exists
+      .sort((a, b) => b.volume - a.volume) // Sort by volume in descending order
+      .slice(0, 10); // Get the top 10 by volume
+  };
+
   return (
     <Paper elevation={3} sx={{ p: 3, mt: 3 }}>
       <Typography variant="h5" gutterBottom>Stock Options for {quote?.shortName || 'N/A'} ({quote?.symbol || 'N/A'})</Typography>
@@ -74,33 +82,36 @@ const StockOptions = () => {
 
       {options && options.length > 0 && (
         <Box sx={{ mt: 4 }}>
-          <Typography variant="h6">Options Contracts</Typography>
+          <Typography variant="h6">Top 10 Options Contracts by Volume</Typography>
           {options.map((option, index) => (
             <Box key={index} sx={{ mt: 2 }}>
               <Typography variant="subtitle1">
                 Expiration Date: {new Date(option.expirationDate * 1000).toLocaleDateString()}
               </Typography>
-              {option.straddles.map((straddle, idx) => (
-                <Paper key={idx} elevation={1} sx={{ p: 2, mt: 2 }}>
-                  <Typography variant="body1"><strong>Strike Price:</strong> ${straddle?.strike || 'N/A'}</Typography>
-                  <Grid container spacing={2}>
-                    <Grid item xs={6}>
-                      <Typography variant="body2"><strong>Call Contract</strong></Typography>
-                      <Typography variant="body2">Symbol: {straddle?.call?.contractSymbol || 'N/A'}</Typography>
-                      <Typography variant="body2">Last Price: ${straddle?.call?.lastPrice || 'N/A'}</Typography>
-                      <Typography variant="body2">Volume: {straddle?.call?.volume || 'N/A'}</Typography>
-                      <Typography variant="body2">Open Interest: {straddle?.call?.openInterest || 'N/A'}</Typography>
-                    </Grid>
-                    <Grid item xs={6}>
-                      <Typography variant="body2"><strong>Put Contract</strong></Typography>
-                      <Typography variant="body2">Symbol: {straddle?.put?.contractSymbol || 'N/A'}</Typography>
-                      <Typography variant="body2">Last Price: ${straddle?.put?.lastPrice || 'N/A'}</Typography>
-                      <Typography variant="body2">Volume: {straddle?.put?.volume || 'N/A'}</Typography>
-                      <Typography variant="body2">Open Interest: {straddle?.put?.openInterest || 'N/A'}</Typography>
-                    </Grid>
-                  </Grid>
-                </Paper>
-              ))}
+              <Box sx={{ mt: 2 }}>
+                <Typography variant="body1" gutterBottom><strong>Top 10 Calls by Volume:</strong></Typography>
+                {getTopOptionsByVolume(option.straddles, 'call').map((callOption, idx) => (
+                  <Paper key={idx} elevation={1} sx={{ p: 2, mt: 1 }}>
+                    <Typography variant="body2">Symbol: {callOption?.contractSymbol || 'N/A'}</Typography>
+                    <Typography variant="body2">Strike Price: ${callOption?.strike || 'N/A'}</Typography>
+                    <Typography variant="body2">Last Price: ${callOption?.lastPrice || 'N/A'}</Typography>
+                    <Typography variant="body2">Volume: {callOption?.volume || 'N/A'}</Typography>
+                    <Typography variant="body2">Open Interest: {callOption?.openInterest || 'N/A'}</Typography>
+                  </Paper>
+                ))}
+              </Box>
+              <Box sx={{ mt: 2 }}>
+                <Typography variant="body1" gutterBottom><strong>Top 10 Puts by Volume:</strong></Typography>
+                {getTopOptionsByVolume(option.straddles, 'put').map((putOption, idx) => (
+                  <Paper key={idx} elevation={1} sx={{ p: 2, mt: 1 }}>
+                    <Typography variant="body2">Symbol: {putOption?.contractSymbol || 'N/A'}</Typography>
+                    <Typography variant="body2">Strike Price: ${putOption?.strike || 'N/A'}</Typography>
+                    <Typography variant="body2">Last Price: ${putOption?.lastPrice || 'N/A'}</Typography>
+                    <Typography variant="body2">Volume: {putOption?.volume || 'N/A'}</Typography>
+                    <Typography variant="body2">Open Interest: {putOption?.openInterest || 'N/A'}</Typography>
+                  </Paper>
+                ))}
+              </Box>
             </Box>
           ))}
         </Box>
