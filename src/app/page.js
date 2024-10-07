@@ -7,18 +7,18 @@ import { CssBaseline, Container, Box, Typography, CircularProgress } from '@mui/
 import ErrorBoundary from './components/website/ErrorBoundary';
 import { TickerProvider, useTicker } from './components/stocks/TickerContext'; // Import the TickerProvider and useTicker
 
-// Lazy load components
-const Header = lazy(() => import('./components/website/Header'));
-const StockAnalysis = lazy(() => import('./components/stocks/StockAnalysis'));
-const EarningsInfo = lazy(() => import('./components/stocks/EarningsInfo'));
-const StockFundamentals = lazy(() => import('./components/stocks/StockFundamentals'));
+import Header from './components/website/Header';
+import StockAnalysis from './components/stocks/StockAnalysis';
+import EarningsInfo from './components/stocks/EarningsInfo';
+import StockFundamentals from './components/stocks/StockFundamentals';
 import StockStatistics from './components/stocks/Statistics';
-const AIChat = lazy(() => import('./components/website/AIChat'));
-const Footer = lazy(() => import('./components/website/Footer'));
-const Homepage = lazy(() => import('./components/website/Homepage'));
-const NewsOutlet = lazy(() => import('./components/website/NewsOutlet'));
-const StockOptions = lazy(() => import('./components/stocks/StockOptions'));
-const StockScreener = lazy(() => import('./components/stocks/Screeners'));
+import AIChat from './components/website/AIChat';
+import Footer from './components/website/Footer';
+import Homepage from './components/website/Homepage';
+import NewsOutlet from './components/website/NewsOutlet';
+import StockOptions from './components/stocks/StockOptions';
+import StockScreener from './components/stocks/Screeners';
+
 
 const ColorModeContext = React.createContext({ toggleColorMode: () => {} });
 
