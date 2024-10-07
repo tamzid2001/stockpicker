@@ -52,9 +52,9 @@ const RecommendationTrend = () => {
         //fetchTrendData();
     }, [ticker, selectedRegion, selectedLanguage]);
 
-    if (loading) return <CircularProgress />;
-    if (error) return <Typography color="error">{error}</Typography>;
-    if (!trendData.length) return <Typography>No recommendation trends available for the selected ticker.</Typography>;
+    // if (loading) return <CircularProgress />;
+    // if (error) return <Typography color="error">{error}</Typography>;
+    // if (!trendData.length) return <Typography>No recommendation trends available for the selected ticker.</Typography>;
 
     return (
         <Box sx={{ py: 4 }}>

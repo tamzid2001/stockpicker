@@ -51,9 +51,9 @@ const RecentUpdates = () => {
         //fetchUpdateData();
     }, [ticker, selectedRegion, selectedLanguage]);
 
-    if (loading) return <CircularProgress />;
-    if (error) return <Typography color="error">{error}</Typography>;
-    if (!updateData) return <Typography>No recent updates available for the selected ticker.</Typography>;
+    // if (loading) return <CircularProgress />;
+    // if (error) return <Typography color="error">{error}</Typography>;
+    // if (!updateData) return <Typography>No recent updates available for the selected ticker.</Typography>;
 
     const { corporateActions, secFilings, calendarEvents, upgradeDowngradeHistory } = updateData;
 
