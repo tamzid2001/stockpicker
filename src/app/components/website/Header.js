@@ -121,7 +121,7 @@ const Header = ({ colorMode, theme }) => {
           </Box>
         </Toolbar>
       </AppBar>
-      <TickerTape colorTheme="dark"></TickerTape>
+      <TickerTape colorTheme="light"></TickerTape>
     </>
   );
 };
