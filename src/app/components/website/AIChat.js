@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { 
-  Fab, Dialog, DialogTitle, DialogContent, DialogActions, 
-  Button, TextField, List, ListItem, Box, Avatar, Typography, IconButton
+  Drawer, IconButton, Box, Avatar, Typography, TextField, List, ListItem, Divider,
+  Button, Fab, Badge
 } from '@mui/material';
-import { Chat, ThumbUp, ThumbDown, Person, SmartToy } from '@mui/icons-material';
+import { Chat, ThumbUp, ThumbDown, Person, SmartToy, Close, Info } from '@mui/icons-material';
 
 const AIChat = ({ stockData }) => {
   const [chatOpen, setChatOpen] = useState(false);
@@ -65,13 +65,43 @@ const AIChat = ({ stockData }) => {
         onClick={() => setChatOpen(true)}
         sx={{ position: 'fixed', bottom: 16, right: 16 }}
       >
-        <Chat />
+        <Badge color="primary" variant="dot">
+          <Chat />
+        </Badge>
       </Fab>
 
-      <Dialog open={chatOpen} onClose={() => setChatOpen(false)} fullWidth maxWidth="sm">
-        <DialogTitle>AI Assistant</DialogTitle>
-        <DialogContent dividers>
-          <List sx={{ maxHeight: 400, overflow: 'auto' }}>
+      <Drawer
+        anchor="right"
+        open={chatOpen}
+        onClose={() => setChatOpen(false)}
+        sx={{ width: 360, flexShrink: 0 }}
+        PaperProps={{ sx: { width: 360, boxShadow: 4 } }}
+      >
+        <Box sx={{ p: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <Avatar sx={{ bgcolor: 'primary.main', mr: 2 }}>
+              <SmartToy />
+            </Avatar>
+            <Typography variant="h6">StockBot</Typography>
+          </Box>
+          <IconButton onClick={() => setChatOpen(false)}>
+            <Close />
+          </IconButton>
+        </Box>
+        <Divider />
+
+        <Box sx={{ p: 2, bgcolor: 'background.default', borderRadius: '12px', mb: 2 }}>
+          <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+            <Info sx={{ mr: 1 }} />
+            <strong>How it works:</strong>
+          </Typography>
+          <Typography variant="body2">
+            StockBot is your AI assistant for stock analysis. Ask questions about stocks, get real-time insights, and understand market trends.
+          </Typography>
+        </Box>
+
+        <Box sx={{ flexGrow: 1, overflowY: 'auto', maxHeight: '60vh', p: 2 }}>
+          <List>
             {chatMessages.map((message, index) => (
               <ListItem key={index} alignItems="flex-start">
                 <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
@@ -80,7 +110,7 @@ const AIChat = ({ stockData }) => {
                   </Avatar>
                   <Box>
                     <Typography variant="body2" fontWeight="bold">
-                      {message.role === 'user' ? 'You' : 'AI'}
+                      {message.role === 'user' ? 'You' : 'StockBot'}
                     </Typography>
                     <Typography variant="body2">{message.content}</Typography>
                   </Box>
@@ -109,6 +139,9 @@ const AIChat = ({ stockData }) => {
               </ListItem>
             ))}
           </List>
+        </Box>
+
+        <Box sx={{ p: 2 }}>
           <TextField
             fullWidth
             variant="outlined"
@@ -118,12 +151,17 @@ const AIChat = ({ stockData }) => {
             onKeyPress={(e) => e.key === 'Enter' && handleChatSubmit()}
             sx={{ mt: 2 }}
           />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setChatOpen(false)}>Close</Button>
-          <Button onClick={handleChatSubmit} color="primary">Send</Button>
-        </DialogActions>
-      </Dialog>
+          <Button
+            onClick={handleChatSubmit}
+            color="primary"
+            variant="contained"
+            fullWidth
+            sx={{ mt: 2 }}
+          >
+            Send
+          </Button>
+        </Box>
+      </Drawer>
     </>
   );
 };

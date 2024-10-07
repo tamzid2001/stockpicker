@@ -1,4 +1,3 @@
-// components/website/Contact.js
 import React, { useState } from 'react';
 import { Container, Box, TextField, Typography, Button, Paper, Avatar } from '@mui/material';
 import { Email, Person, Subject, Message } from '@mui/icons-material';
@@ -18,8 +17,15 @@ const Contact = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Add form submission logic here
-    console.log(formData);
+    
+    // Create a mailto link with the form data
+    const { name, email, subject, message } = formData;
+    const mailtoLink = `mailto:tullah@nyit.edu?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(
+      `Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`
+    )}`;
+
+    // Open the mail client
+    window.location.href = mailtoLink;
   };
 
   return (
