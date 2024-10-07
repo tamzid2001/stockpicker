@@ -20,26 +20,30 @@ const Screeners = () => {
     const [error, setError] = useState(null);
 
     useEffect(() => {
+        const fetchSymbols = async () => {
+            setLoading(true);
+            setError(null);
+            try {
+                const response = await fetch(`/api/screener?scrIds=${selectedScreener}`);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+                if (data.finance && data.finance.result && data.finance.result[0] && data.finance.result[0].quotes) {
+                    setSymbols(data.finance.result[0].quotes);
+                } else {
+                    throw new Error('Invalid data structure received from the API');
+                }
+            } catch (error) {
+                console.error('Error fetching screener data:', error);
+                setError('Error fetching screener data. Please try again later.');
+            } finally {
+                setLoading(false);
+            }
+        };
+
         fetchSymbols();
     }, [selectedScreener]);
-
-    const fetchSymbols = async () => {
-        setLoading(true);
-        setError(null);
-        try {
-            const response = await fetch(`/api/screener?scrIds=${selectedScreener}`);
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            const data = await response.json();
-            setSymbols(data.finance.result[0].quotes || []);
-        } catch (error) {
-            console.error('Error fetching screener data:', error);
-            setError('Error fetching screener data. Please try again later.');
-        } finally {
-            setLoading(false);
-        }
-    };
 
     const handleScreenerChange = (event) => {
         setSelectedScreener(event.target.value);
@@ -64,23 +68,31 @@ const Screeners = () => {
                             </MenuItem>
                         ))}
                     </Select>
-                    <Button variant="contained" color="primary" onClick={fetchSymbols}>
+                    <Button variant="contained" color="primary" onClick={() => setSelectedScreener(selectedScreener)}>
                         Refresh
                     </Button>
                 </Box>
                 {loading ? (
-                    <CircularProgress />
+                    <Box display="flex" justifyContent="center" alignItems="center" sx={{ py: 4 }}>
+                        <CircularProgress />
+                    </Box>
                 ) : error ? (
-                    <Typography color="error" align="center">{error}</Typography>
+                    <Typography color="error" align="center" sx={{ mt: 2 }}>
+                        {error}
+                    </Typography>
+                ) : symbols.length === 0 ? (
+                    <Typography align="center" sx={{ mt: 2 }}>
+                        No symbols found for the selected screener.
+                    </Typography>
                 ) : (
                     <Grid container spacing={2}>
                         {symbols.map((symbol, index) => (
                             <Grid item xs={12} sm={6} key={index}>
                                 <Paper elevation={2} sx={{ p: 2 }}>
-                                    <Typography variant="h6">{symbol.symbol}</Typography>
-                                    <Typography variant="body2">Name: {symbol.shortName}</Typography>
-                                    <Typography variant="body2">Exchange: {symbol.fullExchangeName}</Typography>
-                                    <Typography variant="body2">Market Price: ${symbol.regularMarketPrice}</Typography>
+                                    <Typography variant="h6">{symbol.symbol || 'N/A'}</Typography>
+                                    <Typography variant="body2">Name: {symbol.shortName || 'N/A'}</Typography>
+                                    <Typography variant="body2">Exchange: {symbol.fullExchangeName || 'N/A'}</Typography>
+                                    <Typography variant="body2">Market Price: ${symbol.regularMarketPrice || 'N/A'}</Typography>
                                 </Paper>
                             </Grid>
                         ))}
