@@ -21,7 +21,7 @@ import StockOptions from './components/stocks/StockOptions';
 //import StockScreener from './components/stocks/Screeners';
 import Analyst from './components/stocks/Analyst'
 import Recommendation from './components/stocks/Recommendation';
-
+import RecentUpdates from './components/stocks/RecentUpdates';
 
 const ColorModeContext = React.createContext({ toggleColorMode: () => {} });
 
@@ -98,6 +98,12 @@ function App() {
               <ErrorBoundary fallback={<Typography color="error">Error loading stock statistics</Typography>}>
                 <Suspense fallback={<LoadingFallback />}>
                   <Recommendation ticker={ticker} />
+                </Suspense>
+              </ErrorBoundary>
+
+              <ErrorBoundary fallback={<Typography color="error">Error loading earnings info</Typography>}>
+                <Suspense fallback={<LoadingFallback />}>
+                  <RecentUpdates ticker={ticker} />
                 </Suspense>
               </ErrorBoundary>
 
