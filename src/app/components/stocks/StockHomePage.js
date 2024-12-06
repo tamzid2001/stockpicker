@@ -7,16 +7,15 @@ import EarningsInfo from './EarningsInfo';
 import StockFundamentals from './StockFundamentals';
 import StockStatistics from './Statistics';
 import Recommendation from './Recommendation';
-import RecentUpdates from './RecentUpdates';
 import Analyst from './Analyst';
 import StockOptions from './StockOptions';
 import StockScreener from './Screeners';
-import Insiders from './Insider';
 import CustomML from './CustomML'; 
 import Ertimur from './Ertimur';
 import { useGlobalContext } from '../contexts/GlobalContext';
 import { useTicker } from '../contexts/TickerContext';
 import dynamic from "next/dynamic";
+
 const SymbolOverviewNoSSR = dynamic(
   () => import("react-ts-tradingview-widgets").then((w) => w.SymbolOverview),
   {
@@ -27,8 +26,8 @@ import { AdvancedRealTimeChart } from "react-ts-tradingview-widgets";
 
 const StockHomePage = () => {
   const [tabIndex, setTabIndex] = useState(0);
-  const { ticker, setTicker } = useTicker(); // Access and set ticker from TickerContext
-  const { selectedRegion, selectedLanguage } = useGlobalContext(); // Accessing region and language from GlobalContext
+  const { ticker, setTicker } = useTicker(); 
+  const { selectedRegion, selectedLanguage } = useGlobalContext(); 
   const [inputTicker, setInputTicker] = useState('');
 
   const handleTabChange = (event, newValue) => {
@@ -58,7 +57,7 @@ const StockHomePage = () => {
 
       {ticker && (
         <Paper elevation={3} sx={{ p: 2, mt: 2, boxShadow: 4 }}>
-        <AdvancedRealTimeChart theme="light" height={400} width="100%" symbol={ticker}></AdvancedRealTimeChart>
+          <AdvancedRealTimeChart theme="light" height={400} width="100%" symbol={ticker} />
           <Tabs
             value={tabIndex}
             onChange={handleTabChange}
@@ -68,17 +67,16 @@ const StockHomePage = () => {
             scrollButtons="auto"
             aria-label="Stock Information Tabs"
           >
-            <Tab label="Stock Screener" />
-            <Tab label="Earnings Info" />
-            <Tab label="Stock Fundamentals" />
-            <Tab label="Stock Statistics" />
-            <Tab label="Recommendation" />
-            <Tab label="Recent Updates" />
-            <Tab label="Analyst Reports" />
-            <Tab label="Stock Options" />
-            <Tab label="Insider Transactions" />
-            <Tab label="Custom ML" />
-            {/* <Tab label="Ertimur" /> */}
+            <Tab label="Stock Screener" />          {/* index 0 */}
+            <Tab label="Earnings Info" />           {/* index 1 */}
+            <Tab label="Stock Fundamentals" />       {/* index 2 */}
+            <Tab label="Stock Statistics" />         {/* index 3 */}
+            <Tab label="Recommendation" />           {/* index 4 */}
+            <Tab label="Analyst Reports" />          {/* index 5 */}
+            <Tab label="Stock Options" />            {/* index 6 */}
+            <Tab label="Custom ML" />                {/* index 7 */}
+            {/* If you want to re-enable Ertimur, uncomment and it will be index 8 */}
+            <Tab label="Ertimur" />
           </Tabs>
           <Box sx={{ p: 3 }}>
             {tabIndex === 0 && (
@@ -117,49 +115,50 @@ const StockHomePage = () => {
               </ErrorBoundary>
             )}
             {tabIndex === 5 && (
-              <ErrorBoundary fallback={<Typography color="error">Error loading recent updates</Typography>}>
-                <Suspense fallback={<LoadingFallback />}>
-                  <RecentUpdates ticker={ticker} />
-                </Suspense>
-              </ErrorBoundary>
-            )}
-            {tabIndex === 6 && (
               <ErrorBoundary fallback={<Typography color="error">Error loading analyst reports</Typography>}>
                 <Suspense fallback={<LoadingFallback />}>
                   <Analyst ticker={ticker} />
                 </Suspense>
               </ErrorBoundary>
             )}
-            {tabIndex === 7 && (
+            {tabIndex === 6 && (
               <ErrorBoundary fallback={<Typography color="error">Error loading stock options</Typography>}>
                 <Suspense fallback={<LoadingFallback />}>
                   <StockOptions ticker={ticker} />
                 </Suspense>
               </ErrorBoundary>
             )}
-            {tabIndex === 8 && (
-              <ErrorBoundary fallback={<Typography color="error">Error loading insider transactions</Typography>}>
-                <Suspense fallback={<LoadingFallback />}>
-                  <Insiders ticker={ticker} region={selectedRegion} />
-                </Suspense>
-              </ErrorBoundary>
-            )}
-            {tabIndex === 9 && (
+            {tabIndex === 7 && (
               <ErrorBoundary fallback={<Typography color="error">Error loading Custom ML</Typography>}>
                 <Suspense fallback={<LoadingFallback />}>
                   <CustomML ticker={ticker} />
                 </Suspense>
               </ErrorBoundary>
             )}
-            {tabIndex === 10 && (
+            {/* If Ertimur is needed:
+            {tabIndex === 8 && (
               <ErrorBoundary fallback={<Typography color="error">Error loading Ertimur</Typography>}>
                 <Suspense fallback={<LoadingFallback />}>
                   <Ertimur ticker={ticker} />
                 </Suspense>
               </ErrorBoundary>
-            )}
+            )} */}
           </Box>
         </Paper>
+      )}
+      {!ticker && (
+        <Box sx={{ mt: 4, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+          <TextField
+            label="Enter Stock Symbol"
+            variant="outlined"
+            value={inputTicker}
+            onChange={handleInputChange}
+            sx={{ mr: 2 }}
+          />
+          <Button variant="contained" color="primary" onClick={handleTickerSubmit}>
+            Submit
+          </Button>
+        </Box>
       )}
     </Container>
   );
