@@ -75,8 +75,7 @@ const StockHomePage = () => {
             <Tab label="Analyst Reports" />          {/* index 5 */}
             <Tab label="Stock Options" />            {/* index 6 */}
             <Tab label="Custom ML" />                {/* index 7 */}
-            {/* If you want to re-enable Ertimur, uncomment and it will be index 8 */}
-            <Tab label="Ertimur" />
+            <Tab label="Ertimur" />                   {/* index 8 */}
           </Tabs>
           <Box sx={{ p: 3 }}>
             {tabIndex === 0 && (
@@ -135,30 +134,15 @@ const StockHomePage = () => {
                 </Suspense>
               </ErrorBoundary>
             )}
-            {/* If Ertimur is needed:
             {tabIndex === 8 && (
               <ErrorBoundary fallback={<Typography color="error">Error loading Ertimur</Typography>}>
                 <Suspense fallback={<LoadingFallback />}>
                   <Ertimur ticker={ticker} />
                 </Suspense>
               </ErrorBoundary>
-            )} */}
+            )}
           </Box>
         </Paper>
-      )}
-      {!ticker && (
-        <Box sx={{ mt: 4, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-          <TextField
-            label="Enter Stock Symbol"
-            variant="outlined"
-            value={inputTicker}
-            onChange={handleInputChange}
-            sx={{ mr: 2 }}
-          />
-          <Button variant="contained" color="primary" onClick={handleTickerSubmit}>
-            Submit
-          </Button>
-        </Box>
       )}
     </Container>
   );
