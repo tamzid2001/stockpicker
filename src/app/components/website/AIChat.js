@@ -34,10 +34,8 @@ const AIChat = ({ stockData }) => {
     setChatMessages(prev => [...prev, newUserMessage]);
     setUserMessage('');
 
-    // Add a placeholder for the assistant response
-    const assistantMessage = { role: 'assistant', content: '' };
-    setChatMessages(prev => [...prev, assistantMessage]);
-
+    // Add a placeholder for the assistant's incoming message
+    setChatMessages(prev => [...prev, { role: 'assistant', content: '' }]);
     setIsAssistantTyping(true);
 
     try {
@@ -57,12 +55,13 @@ const AIChat = ({ stockData }) => {
         const { value, done: doneReading } = await reader.read();
         done = doneReading;
         if (value) {
-          // Decode partial chunk in streaming mode
+          // Decode the current chunk in streaming mode
           const chunkValue = decoder.decode(value, { stream: !done });
           if (chunkValue) {
             setChatMessages(prevMessages => {
               const messages = [...prevMessages];
               const lastIndex = messages.length - 1;
+              // Append the new chunk to the assistant's last message
               messages[lastIndex] = {
                 ...messages[lastIndex],
                 content: messages[lastIndex].content + chunkValue,
@@ -73,7 +72,7 @@ const AIChat = ({ stockData }) => {
         }
       }
 
-      // Final flush to decode any remaining text
+      // Final flush of the decoder to get any remaining text
       const finalChunk = decoder.decode();
       if (finalChunk) {
         setChatMessages(prevMessages => {
@@ -149,7 +148,7 @@ const AIChat = ({ stockData }) => {
         id="chat-container" 
         sx={{
           overflowY: 'auto',
-          maxHeight: isFullScreen ? 'calc(100vh - 250px)' : '80vh',  // Allow more room and scrolling
+          maxHeight: isFullScreen ? 'calc(100vh - 250px)' : '80vh',
           p: 2,
           pb: 0
         }}
@@ -184,8 +183,8 @@ const AIChat = ({ stockData }) => {
                   borderRadius: 2,
                   width: '100%',
                   mb: 1,
-                  whiteSpace: 'pre-wrap',    // Preserve line breaks
-                  wordBreak: 'break-word'    // Wrap long words
+                  whiteSpace: 'pre-wrap',
+                  wordBreak: 'break-word'
                 }}
               >
                 <ReactMarkdown
