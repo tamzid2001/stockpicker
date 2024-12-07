@@ -21,7 +21,6 @@ const AIChat = ({ stockData }) => {
   const [isFullScreen, setIsFullScreen] = useState(false);
 
   useEffect(() => {
-    // Auto-scroll to the bottom of the chat container when new messages arrive
     const chatContainer = document.getElementById('chat-container');
     if (chatContainer) {
       chatContainer.scrollTop = chatContainer.scrollHeight;
@@ -35,8 +34,10 @@ const AIChat = ({ stockData }) => {
     setChatMessages(prev => [...prev, newUserMessage]);
     setUserMessage('');
 
-    // Add an empty assistant message as a placeholder for the incoming response
-    setChatMessages(prev => [...prev, { role: 'assistant', content: '' }]);
+    // Add a placeholder for the assistant response
+    const assistantMessage = { role: 'assistant', content: '' };
+    setChatMessages(prev => [...prev, assistantMessage]);
+
     setIsAssistantTyping(true);
 
     try {
@@ -51,30 +52,41 @@ const AIChat = ({ stockData }) => {
       const reader = response.body.getReader();
       const decoder = new TextDecoder();
       let done = false;
-      let fullResponse = '';
 
       while (!done) {
         const { value, done: doneReading } = await reader.read();
         done = doneReading;
         if (value) {
-          // Decode chunk by chunk and accumulate
-          fullResponse += decoder.decode(value, { stream: !done });
+          // Decode partial chunk in streaming mode
+          const chunkValue = decoder.decode(value, { stream: !done });
+          if (chunkValue) {
+            setChatMessages(prevMessages => {
+              const messages = [...prevMessages];
+              const lastIndex = messages.length - 1;
+              messages[lastIndex] = {
+                ...messages[lastIndex],
+                content: messages[lastIndex].content + chunkValue,
+              };
+              return messages;
+            });
+          }
         }
       }
 
-      // If there's any pending text left in the decoder buffer, decode it now
-      fullResponse += decoder.decode();
+      // Final flush to decode any remaining text
+      const finalChunk = decoder.decode();
+      if (finalChunk) {
+        setChatMessages(prevMessages => {
+          const messages = [...prevMessages];
+          const lastIndex = messages.length - 1;
+          messages[lastIndex] = {
+            ...messages[lastIndex],
+            content: messages[lastIndex].content + finalChunk,
+          };
+          return messages;
+        });
+      }
 
-      // Update the last assistant message with the full response
-      setChatMessages(prevMessages => {
-        const messages = [...prevMessages];
-        const lastIndex = messages.length - 1;
-        messages[lastIndex] = {
-          ...messages[lastIndex],
-          content: messages[lastIndex].content + fullResponse,
-        };
-        return messages;
-      });
     } catch (error) {
       console.error('Error in AI chat:', error);
       setChatMessages(prev => [
@@ -137,7 +149,7 @@ const AIChat = ({ stockData }) => {
         id="chat-container" 
         sx={{
           overflowY: 'auto',
-          height: isFullScreen ? 'calc(100vh - 250px)' : '60vh',
+          maxHeight: isFullScreen ? 'calc(100vh - 250px)' : '80vh',  // Allow more room and scrolling
           p: 2,
           pb: 0
         }}
@@ -172,6 +184,8 @@ const AIChat = ({ stockData }) => {
                   borderRadius: 2,
                   width: '100%',
                   mb: 1,
+                  whiteSpace: 'pre-wrap',    // Preserve line breaks
+                  wordBreak: 'break-word'    // Wrap long words
                 }}
               >
                 <ReactMarkdown
