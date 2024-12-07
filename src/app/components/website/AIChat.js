@@ -35,10 +35,8 @@ const AIChat = ({ stockData }) => {
     setChatMessages(prev => [...prev, newUserMessage]);
     setUserMessage('');
 
-    // Add an empty assistant message to chatMessages
-    const assistantMessage = { role: 'assistant', content: '' };
-    setChatMessages(prev => [...prev, assistantMessage]);
-
+    // Add an empty assistant message as a placeholder for the incoming response
+    setChatMessages(prev => [...prev, { role: 'assistant', content: '' }]);
     setIsAssistantTyping(true);
 
     try {
@@ -53,40 +51,30 @@ const AIChat = ({ stockData }) => {
       const reader = response.body.getReader();
       const decoder = new TextDecoder();
       let done = false;
+      let fullResponse = '';
 
       while (!done) {
         const { value, done: doneReading } = await reader.read();
         done = doneReading;
-        // Decode incrementally using streaming mode
-        const chunkValue = value ? decoder.decode(value, { stream: true }) : '';
-
-        if (chunkValue) {
-          setChatMessages(prevMessages => {
-            const messages = [...prevMessages];
-            const lastIndex = messages.length - 1;
-            messages[lastIndex] = {
-              ...messages[lastIndex],
-              content: messages[lastIndex].content + chunkValue,
-            };
-            return messages;
-          });
+        if (value) {
+          // Decode chunk by chunk and accumulate
+          fullResponse += decoder.decode(value, { stream: !done });
         }
       }
 
-      // Final flush of the decoder in case there's any remaining buffered text
-      const finalChunk = decoder.decode();
-      if (finalChunk) {
-        setChatMessages(prevMessages => {
-          const messages = [...prevMessages];
-          const lastIndex = messages.length - 1;
-          messages[lastIndex] = {
-            ...messages[lastIndex],
-            content: messages[lastIndex].content + finalChunk,
-          };
-          return messages;
-        });
-      }
+      // If there's any pending text left in the decoder buffer, decode it now
+      fullResponse += decoder.decode();
 
+      // Update the last assistant message with the full response
+      setChatMessages(prevMessages => {
+        const messages = [...prevMessages];
+        const lastIndex = messages.length - 1;
+        messages[lastIndex] = {
+          ...messages[lastIndex],
+          content: messages[lastIndex].content + fullResponse,
+        };
+        return messages;
+      });
     } catch (error) {
       console.error('Error in AI chat:', error);
       setChatMessages(prev => [
