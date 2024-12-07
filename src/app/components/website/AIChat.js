@@ -57,20 +57,36 @@ const AIChat = ({ stockData }) => {
       while (!done) {
         const { value, done: doneReading } = await reader.read();
         done = doneReading;
-        const chunkValue = decoder.decode(value);
+        // Decode incrementally using streaming mode
+        const chunkValue = value ? decoder.decode(value, { stream: true }) : '';
 
-        // Update the assistant's message content
+        if (chunkValue) {
+          setChatMessages(prevMessages => {
+            const messages = [...prevMessages];
+            const lastIndex = messages.length - 1;
+            messages[lastIndex] = {
+              ...messages[lastIndex],
+              content: messages[lastIndex].content + chunkValue,
+            };
+            return messages;
+          });
+        }
+      }
+
+      // Final flush of the decoder in case there's any remaining buffered text
+      const finalChunk = decoder.decode();
+      if (finalChunk) {
         setChatMessages(prevMessages => {
           const messages = [...prevMessages];
           const lastIndex = messages.length - 1;
-          const lastMessage = messages[lastIndex];
           messages[lastIndex] = {
-            ...lastMessage,
-            content: lastMessage.content + chunkValue,
+            ...messages[lastIndex],
+            content: messages[lastIndex].content + finalChunk,
           };
           return messages;
         });
       }
+
     } catch (error) {
       console.error('Error in AI chat:', error);
       setChatMessages(prev => [
@@ -157,17 +173,13 @@ const AIChat = ({ stockData }) => {
                       <CircularProgress size={16} sx={{ ml: 1 }} />
                     )}
                   </Typography>
-                  {/* Uncomment to display timestamps if desired
-                  <Typography variant="caption" color="text.secondary">
-                    {new Date().toLocaleTimeString()}
-                  </Typography>*/}
                 </Box>
               </Box>
 
               <Box
                 sx={{
                   bgcolor: message.role === 'user' ? 'primary.light' : 'secondary.light',
-                  color: message.role === 'user' ? 'black' : 'black',
+                  color: 'black',
                   p: 2,
                   borderRadius: 2,
                   width: '100%',
