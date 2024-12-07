@@ -176,23 +176,27 @@ const AIChat = ({ stockData }) => {
               </Box>
 
               <Box
-                sx={{
-                  bgcolor: message.role === 'user' ? 'primary.light' : 'secondary.light',
-                  color: 'black',
-                  p: 2,
-                  borderRadius: 2,
-                  width: '100%',
-                  mb: 1,
-                  whiteSpace: 'pre-wrap',
-                  wordBreak: 'break-word'
-                }}
-              >
-                <ReactMarkdown
-                  children={message.content}
-                  remarkPlugins={[remarkMath]}
-                  rehypePlugins={[rehypeKatex]}
-                />
-              </Box>
+  sx={{
+    bgcolor: message.role === 'user' ? 'primary.light' : 'secondary.light',
+    color: 'black',
+    p: 2,
+    borderRadius: 2,
+    width: '100%',
+    mb: 1,
+    whiteSpace: 'pre-wrap',
+    wordBreak: 'break-word',
+    // Add the properties below to make the box scrollable
+    maxHeight: '40vh',
+    overflowY: 'auto'
+  }}
+>
+  <ReactMarkdown
+    children={message.content}
+    remarkPlugins={[remarkMath]}
+    rehypePlugins={[rehypeKatex]}
+  />
+</Box>
+
 
               {message.role === 'assistant' && !feedbackGiven[index] && !isAssistantTyping && (
                 <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1, width: '100%' }}>
