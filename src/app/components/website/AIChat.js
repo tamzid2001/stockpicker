@@ -185,7 +185,6 @@ const AIChat = ({ stockData }) => {
     mb: 1,
     whiteSpace: 'pre-wrap',
     wordBreak: 'break-word',
-    // Add the properties below to make the box scrollable
     maxHeight: '40vh',
     overflowY: 'auto'
   }}
@@ -194,8 +193,14 @@ const AIChat = ({ stockData }) => {
     children={message.content}
     remarkPlugins={[remarkMath]}
     rehypePlugins={[rehypeKatex]}
+    components={{
+      p: ({ node, ...props }) => (
+        <p style={{ margin: 0, padding: 0, lineHeight: '1.4' }} {...props} />
+      ),
+    }}
   />
 </Box>
+
 
 
               {message.role === 'assistant' && !feedbackGiven[index] && !isAssistantTyping && (
